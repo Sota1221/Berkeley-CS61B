@@ -81,11 +81,11 @@ public class IntList {
 
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        if (A == null) {
+        IntList pointer = A;
+        if (pointer == null) {
             A = B;
             return A;
         }
-        IntList pointer = A;
         while(pointer.rest != null) {
             pointer = pointer.rest;
         }
@@ -99,14 +99,14 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
+        IntList pointer = A;
+        IntList clone = new IntList(A.first, null);
         if(A == null){
             return B;
         }
-        IntList pointer = A;
-        IntList clone = new IntList(A.first, null);
         while(pointer.rest != null){
             pointer = pointer.rest;
-            clone.rest = new IntList(pointer.fist, null);
+            clone.rest = new IntList(pointer.first, null);
         }
         clone.rest = B;
         return clone;
