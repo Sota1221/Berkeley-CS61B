@@ -86,11 +86,10 @@ public class IntList {
             return A;
         }
         IntList pointer = A;
-        while(A.rest != null) {
-            A = A.rest;
+        while(pointer.rest != null) {
+            pointer = pointer.rest;
         }
-        A.rest = B;
-        A = pointer;
+        pointer.rest = B;
         return A;
     }
 
