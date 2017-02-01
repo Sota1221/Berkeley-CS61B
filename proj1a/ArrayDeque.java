@@ -128,8 +128,8 @@ public class ArrayDeque<Item> {
         Item first = items[firstIndex];
         items[firstIndex] = null;
         if (size == 1) {
-            firstIndex = 0;
-            rearIndex = 0;
+            firstIndex = -1;
+            rearIndex = -1;
         } else if (firstIndex == items.length - 1) {
             firstIndex = 0;
         } else {
