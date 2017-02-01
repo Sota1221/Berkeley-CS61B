@@ -48,7 +48,8 @@ public class ArrayDeque<Item> {
             }
         } else {
             if (currentCap == size) {
-                resize(true, size * RFACTOR, 0, 0, items.length, items, null);
+                resize(true, size * RFACTOR, 0, 1, items.length, items, null);
+                items[0] = item;
                 rearIndex = size;
                 size += 1;
             } else {
