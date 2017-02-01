@@ -77,7 +77,7 @@ public class ArrayDeque<Item> {
                 items[firstIndex] = item;
                 size += 1;
             } else {
-                rearIndex += 1;
+                rearIndex = (rearIndex + 1) % items.length;
                 items[rearIndex] = item;
                 size += 1;
             }
@@ -158,3 +158,4 @@ public class ArrayDeque<Item> {
         return items[(firstIndex + index) % items.length];
     }
 }
+
