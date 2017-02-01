@@ -39,7 +39,7 @@ public class ArrayDeque<Item> {
                         temp.length - firstIndex, rearIndex + 1, temp, items);
                 firstIndex = 0;
                 items[firstIndex] = item;
-                rearIndex += 1;
+                rearIndex = size;
                 size += 1;
             } else {
                 items[firstIndex - 1] = item;
@@ -73,8 +73,8 @@ public class ArrayDeque<Item> {
                 resize(false, currentCap, 0,
                         temp.length - firstIndex, rearIndex + 1, temp, items);
                 firstIndex = 0;
-                rearIndex += 1;
-                items[firstIndex] = item;
+                rearIndex = size;
+                items[rearIndex] = item;
                 size += 1;
             } else {
                 rearIndex = (rearIndex + 1) % items.length;
