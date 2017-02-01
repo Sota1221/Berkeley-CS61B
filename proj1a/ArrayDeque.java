@@ -30,15 +30,16 @@ public class ArrayDeque<Item> {
             firstIndex = 0;
             rearIndex = 0;
             size += 1;
-        } else if (firstIndex != 0){
+        } else if (firstIndex != 0) {
             if (currentCap == size) {
                 Item[] temp = items;
                 resize(true, size * RFACTOR, firstIndex,
-                        0, items.length - firstIndex, items, null);
+                        1, items.length - firstIndex, items, null);
                 resize(false, currentCap, 0,
                         temp.length - firstIndex, rearIndex + 1, temp, items);
-                firstIndex = currentCap - 1;
+                firstIndex = 0;
                 items[firstIndex] = item;
+                rearIndex += 1;
                 size += 1;
             } else {
                 items[firstIndex - 1] = item;
@@ -71,6 +72,7 @@ public class ArrayDeque<Item> {
                         0, items.length - firstIndex, items, null);
                 resize(false, currentCap, 0,
                         temp.length - firstIndex, rearIndex + 1, temp, items);
+                firstIndex = 0;
                 rearIndex += 1;
                 items[firstIndex] = item;
                 size += 1;
@@ -97,7 +99,7 @@ public class ArrayDeque<Item> {
         return (size == 0);
     }
 
-    public int size(){
+    public int size() {
         return size;
     }
 

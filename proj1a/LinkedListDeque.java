@@ -2,7 +2,7 @@ public class LinkedListDeque<Item> {
     private Node sentinel;
     private int size;
 
-    public class Node {
+    private class Node {
         private Node prev;
         private Item item;
         private Node next;
@@ -21,7 +21,7 @@ public class LinkedListDeque<Item> {
         size = 0;
     }
 
-    public Item helper(int index, Node node) {
+    private Item helper(int index, Node node) {
         if (index == 0) {
             return node.item;
         }
@@ -51,7 +51,10 @@ public class LinkedListDeque<Item> {
 
     public void addLast(Item item) {
         if (isEmpty()) {
-            addFirst(item);
+            Node newFrontNode = new Node(sentinel, item, sentinel);
+            sentinel.next = newFrontNode;
+            sentinel.prev = newFrontNode;
+            size += 1;
         } else {
             Node newFrontNode = new Node(sentinel.prev, item, sentinel);
             sentinel.prev.next = newFrontNode;
