@@ -1,5 +1,5 @@
 /** Performs some basic linked list tests. */
-public class LinkedListDequeTest {
+public class ArayDequeTest {
 
 	/* Utility method for printing out empty checks. */
 	public static boolean checkEmpty(boolean expected, boolean actual) {
@@ -37,37 +37,25 @@ public class LinkedListDequeTest {
 //		System.out.println("Running add/isEmpty/Size test.");
 //		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
-		ArrayDeque<Integer> lld2 = new ArrayDeque<Integer>();
+		ArrayDeque<String> lld1 = new ArrayDeque<String>();
 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
-		boolean passed = checkEmpty(true, lld2.isEmpty());
-
 
 		lld1.addFirst("front");
-		lld2.addFirst(1);
 
 //		 The && operator is the same as "and" in Python.
 		// It's a binary operator that returns true if both arguments true, and false otherwise.
 		passed = checkSize(1, lld1.size()) && passed;
 		passed = checkEmpty(false, lld1.isEmpty()) && passed;
-		passed = checkSize(1, lld2.size()) && passed;
-		passed = checkEmpty(false, lld2.isEmpty()) && passed;
 
 		lld1.addLast("middle");
-		lld2.addLast(2);
 		passed = checkSize(2, lld1.size()) && passed;
-		passed = checkSize(2, lld2.size()) && passed;
-
 
 		lld1.addLast("back");
-		lld2.addLast(3);
 		passed = checkSize(3, lld1.size()) && passed;
-		passed = checkSize(3, lld2.size()) && passed;
 
 		System.out.println("Printing out deque: ");
 		lld1.printDeque();
-		lld2.printDeque();
 
 		printTestStatus(passed);
 
@@ -80,7 +68,7 @@ public class LinkedListDequeTest {
 //
 //		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
 		// should be empty
 		boolean passed = checkEmpty(true, lld1.isEmpty());
 
@@ -99,6 +87,6 @@ public class LinkedListDequeTest {
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 		addIsEmptySizeTest();
-//		addRemoveTest();
+		addRemoveTest();
 	}
 } 
