@@ -16,7 +16,7 @@ public class ArrayDeque<Item> {
                         int nextPos, int len, Item[] prevPlace, Item[] nextPlace) {
         if (flag) {
             Item[] a = (Item[]) new Object[capacity];
-            System.arraycopy(prevPlace, currPos, a, 0, len);
+            System.arraycopy(prevPlace, currPos, a, nextPos, len);
             items = a;
             currentCap = capacity;
         } else {
@@ -36,7 +36,7 @@ public class ArrayDeque<Item> {
                 resize(true, size * RFACTOR, firstIndex,
                         1, items.length - firstIndex, items, null);
                 resize(false, currentCap, 0,
-                        temp.length - firstIndex, rearIndex + 1, temp, items);
+                        temp.length - firstIndex + 1, rearIndex + 1, temp, items);
                 firstIndex = 0;
                 items[firstIndex] = item;
                 rearIndex = size;
