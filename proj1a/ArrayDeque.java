@@ -127,7 +127,10 @@ public class ArrayDeque<Item> {
         }
         Item first = items[firstIndex];
         items[firstIndex] = null;
-        if (firstIndex == items.length - 1) {
+        if (size == 1) {
+            firstIndex = 0;
+            rearIndex = 0;
+        } else if (firstIndex == items.length - 1) {
             firstIndex = 0;
         } else {
             firstIndex += 1;
@@ -142,7 +145,10 @@ public class ArrayDeque<Item> {
         }
         Item last = items[rearIndex];
         items[rearIndex] = null;
-        if (rearIndex == 0) {
+        if (size == 0) {
+            firstIndex = -1;
+            rearIndex = -1;
+        } else if (rearIndex == 0) {
             rearIndex = items.length - 1;
         } else {
             rearIndex -= 1;
