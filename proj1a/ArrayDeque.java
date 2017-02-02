@@ -140,7 +140,7 @@ public class ArrayDeque<Item> {
             firstIndex += 1;
         }
         size -= 1;
-        if (size <= currentCap / DFACTOR) {
+        if (size <= currentCap / DFACTOR && !(isEmpty())) {
             if (rearIndex < firstIndex) {
                 Item[] temp = items;
                 resize(true, currentCap / 2, firstIndex,
@@ -173,7 +173,7 @@ public class ArrayDeque<Item> {
             rearIndex -= 1;
         }
         size -= 1;
-        if (size <= currentCap / DFACTOR) {
+        if (size <= currentCap / DFACTOR && !(isEmpty())) {
             if (rearIndex < firstIndex) {
                 Item[] temp = items;
                 resize(true, currentCap / 2, firstIndex,
