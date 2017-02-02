@@ -86,6 +86,9 @@ public class LinkedListDeque<Item> {
         }
         Node pointer = sentinel.next;
         sentinel.next = sentinel.next.next;
+        pointer.next.prev = sentinel;
+        pointer.prev = null;
+        pointer.next = null;
         size -= 1;
         return pointer.item;
     }
@@ -98,12 +101,14 @@ public class LinkedListDeque<Item> {
         Node last = pointer.prev;
         last.next = sentinel;
         sentinel.prev = last;
+        pointer.prev = null;
+        pointer.next = null;
         size -= 1;
         return pointer.item;
     }
 
     public Item get(int index) {
-        if (isEmpty()) {
+        if (isEmpty() || index >= size) {
             return null;
         } else {
             Node pointer = sentinel.next;

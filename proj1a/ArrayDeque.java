@@ -6,6 +6,7 @@ public class ArrayDeque<Item> {
     private int currentCap = 8;
 
     private static int RFACTOR = 2;
+    private static int DFACTOR = 4;
 
     public ArrayDeque() {
         items = (Item[]) new Object[currentCap];
@@ -23,6 +24,8 @@ public class ArrayDeque<Item> {
             System.arraycopy(prevPlace, currPos, nextPlace, nextPos, len);
         }
     }
+
+
 
     public void addFirst(Item item) {
         if (isEmpty()) {
@@ -137,6 +140,21 @@ public class ArrayDeque<Item> {
             firstIndex += 1;
         }
         size -= 1;
+        if (size <= currentCap / DFACTOR) {
+            if (rearIndex < firstIndex) {
+                Item[] temp = items;
+                resize(true, currentCap / 2, firstIndex,
+                        0, items.length - firstIndex, items, null);
+                resize(false, currentCap, 0,
+                        temp.length - firstIndex, rearIndex + 1, temp, items);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            } else {
+                resize(true, currentCap / 2, firstIndex, 0, size, items, null);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            }
+        }
         return first;
     }
 
@@ -155,11 +173,26 @@ public class ArrayDeque<Item> {
             rearIndex -= 1;
         }
         size -= 1;
+        if (size <= currentCap / DFACTOR) {
+            if (rearIndex < firstIndex) {
+                Item[] temp = items;
+                resize(true, currentCap / 2, firstIndex,
+                        0, items.length - firstIndex, items, null);
+                resize(false, currentCap, 0,
+                        temp.length - firstIndex, rearIndex + 1, temp, items);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            } else {
+                resize(true, currentCap / 2, firstIndex, 0, size, items, null);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            }
+        }
         return last;
     }
 
     public Item get(int index) {
-        if (isEmpty()) {
+        if (isEmpty() || index >= size) {
             return null;
         }
         return items[(firstIndex + index) % items.length];
