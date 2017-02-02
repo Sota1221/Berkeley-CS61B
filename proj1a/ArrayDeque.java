@@ -7,6 +7,7 @@ public class ArrayDeque<Item> {
 
     private static int RFACTOR = 2;
     private static int DFACTOR = 4;
+    pruvate static int MEASUREMENT = 16;
 
     public ArrayDeque() {
         items = (Item[]) new Object[currentCap];
@@ -158,7 +159,9 @@ public class ArrayDeque<Item> {
             firstIndex += 1;
         }
         size -= 1;
-        resizeDown();
+        if (!(currentCap < MEASUREMENT || size * 4 > currentCap)) {
+            resizeDown();
+        }
         return first;
     }
 
@@ -168,7 +171,7 @@ public class ArrayDeque<Item> {
         }
         Item last = items[rearIndex];
         items[rearIndex] = null;
-        if (size == 0) {
+        if (size == 1) {
             firstIndex = -1;
             rearIndex = -1;
         } else if (rearIndex == 0) {
@@ -177,7 +180,9 @@ public class ArrayDeque<Item> {
             rearIndex -= 1;
         }
         size -= 1;
-        resizeDown();
+        if (!(currentCap < MEASUREMENT || size * 4 > currentCap)) {
+            resizeDown();
+        }
         return last;
     }
 
