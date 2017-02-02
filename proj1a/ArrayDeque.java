@@ -5,9 +5,9 @@ public class ArrayDeque<Item> {
     private int rearIndex;
     private int currentCap = 8;
 
-    private static int RFACTOR = 2;
-    private static int DFACTOR = 4;
-    pruvate static int MEASUREMENT = 16;
+    private static final int RFACTOR = 2;
+    private static final int DFACTOR = 4;
+    private static final int MEASUREMENT = 16;
 
     public ArrayDeque() {
         items = (Item[]) new Object[currentCap];
