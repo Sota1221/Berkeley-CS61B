@@ -25,7 +25,27 @@ public class ArrayDeque<Item> {
         }
     }
 
+    private void trickyResize(int capacity0, int firstNextPos, int secondNextPos, Item[] copy) {
+        resize(true, capacity0, firstIndex, firstNextPos,
+                items.length - firstIndex, items, null);
+        resize(false, currentCap, 0, secondNextPos,
+                rearIndex + 1, copy, items);
+    }
 
+    private void resizeDown() {
+        if (size <= currentCap / DFACTOR && !(isEmpty())) {
+            if (rearIndex < firstIndex) {
+                Item[] temp = items;
+                trickyResize(currentCap / 2, 0, temp.length - firstIndex, temp);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            } else {
+                resize(true, currentCap / 2, firstIndex, 0, size, items, null);
+                firstIndex = 0;
+                rearIndex = size - 1;
+            }
+        }
+    }
 
     public void addFirst(Item item) {
         if (isEmpty()) {
@@ -36,10 +56,8 @@ public class ArrayDeque<Item> {
         } else if (firstIndex != 0) {
             if (currentCap == size) {
                 Item[] temp = items;
-                resize(true, size * RFACTOR, firstIndex,
-                        1, items.length - firstIndex, items, null);
-                resize(false, currentCap, 0,
-                        temp.length - firstIndex + 1, rearIndex + 1, temp, items);
+                trickyResize(size * RFACTOR,
+                        1, temp.length - firstIndex + 1, temp);
                 firstIndex = 0;
                 items[firstIndex] = item;
                 rearIndex = size;
@@ -51,7 +69,8 @@ public class ArrayDeque<Item> {
             }
         } else {
             if (currentCap == size) {
-                resize(true, size * RFACTOR, 0, 1, items.length, items, null);
+                resize(true, size * RFACTOR, 0,
+                        1, items.length, items, null);
                 items[0] = item;
                 rearIndex = size;
                 size += 1;
@@ -72,10 +91,8 @@ public class ArrayDeque<Item> {
         } else if (firstIndex != 0) {
             if (currentCap == size) {
                 Item[] temp = items;
-                resize(true, size * RFACTOR, firstIndex,
-                        0, items.length - firstIndex, items, null);
-                resize(false, currentCap, 0,
-                        temp.length - firstIndex, rearIndex + 1, temp, items);
+                trickyResize(size * RFACTOR,
+                        0, temp.length - firstIndex, temp);
                 firstIndex = 0;
                 rearIndex = size;
                 items[rearIndex] = item;
@@ -87,7 +104,8 @@ public class ArrayDeque<Item> {
             }
         } else {
             if (currentCap == size) {
-                resize(true, size * RFACTOR, 0, 0, items.length, items, null);
+                resize(true, size * RFACTOR, 0,
+                        0, items.length, items, null);
                 rearIndex = size;
                 items[rearIndex] = item;
                 size += 1;
@@ -140,21 +158,7 @@ public class ArrayDeque<Item> {
             firstIndex += 1;
         }
         size -= 1;
-        if (size <= currentCap / DFACTOR && !(isEmpty())) {
-            if (rearIndex < firstIndex) {
-                Item[] temp = items;
-                resize(true, currentCap / 2, firstIndex,
-                        0, items.length - firstIndex, items, null);
-                resize(false, currentCap, 0,
-                        temp.length - firstIndex, rearIndex + 1, temp, items);
-                firstIndex = 0;
-                rearIndex = size - 1;
-            } else {
-                resize(true, currentCap / 2, firstIndex, 0, size, items, null);
-                firstIndex = 0;
-                rearIndex = size - 1;
-            }
-        }
+        resizeDown();
         return first;
     }
 
@@ -173,21 +177,7 @@ public class ArrayDeque<Item> {
             rearIndex -= 1;
         }
         size -= 1;
-        if (size <= currentCap / DFACTOR && !(isEmpty())) {
-            if (rearIndex < firstIndex) {
-                Item[] temp = items;
-                resize(true, currentCap / 2, firstIndex,
-                        0, items.length - firstIndex, items, null);
-                resize(false, currentCap, 0,
-                        temp.length - firstIndex, rearIndex + 1, temp, items);
-                firstIndex = 0;
-                rearIndex = size - 1;
-            } else {
-                resize(true, currentCap / 2, firstIndex, 0, size, items, null);
-                firstIndex = 0;
-                rearIndex = size - 1;
-            }
-        }
+        resizeDown();
         return last;
     }
 
