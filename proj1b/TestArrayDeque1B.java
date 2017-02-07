@@ -10,7 +10,7 @@ public class TestArrayDeque1B {
     private double probabilityOfRemoving = 0.3;
 
     @Test
-    public void arrayDequeTest() {
+    public void ArrayDequeTest() {
         /** Cited from StudentArrayDequeLauncher. */
         StudentArrayDeque<Integer> sad1 = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> ads1 = new ArrayDequeSolution<>();
