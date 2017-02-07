@@ -1,7 +1,7 @@
 /**
  * Created by sota_ on 2/4/2017.
  */
-public class OffByN implements CharacterComparator{
+public class OffByN implements CharacterComparator {
 
     private int N;
 
