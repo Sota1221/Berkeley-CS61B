@@ -35,7 +35,7 @@ public class Palindrome {
         for (int i = 0; i < len; i++) {
             Character char1 = (Character) stringDeque.get(i);
             Character char2 = (Character) stringDeque.get(len - 1 - i);
-            if (!cc.equalChars(char1, char2) || char1 != char2) {
+            if (!cc.equalChars(char1, char2)) {
                 return false;
             }
         }

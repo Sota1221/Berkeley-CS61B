@@ -4,13 +4,12 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import java.util.concurrent.DelayQueue;
 
 public class TestArrayDeque1B {
 
 
     @Test
-    public void ArrayDequeTest() {
+    public void arrayDequeTest() {
         /** Cited from StudentArrayDequeLauncher. */
         StudentArrayDeque<Integer> sad1 = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> ads1 = new ArrayDequeSolution<>();
