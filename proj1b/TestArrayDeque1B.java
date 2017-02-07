@@ -4,10 +4,10 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+
+
 public class TestArrayDeque1B {
 
-    private int numberOfTrials = 20;
-    private double probabilityOfRemoving = 0.3;
 
     @Test
     public void ArrayDequeTest() {
@@ -17,14 +17,13 @@ public class TestArrayDeque1B {
         OperationSequence process = new OperationSequence();
 
 
-        for (int i = 0; i < numberOfTrials; i += 1) {
+        for (int i = 0; i < 20; i += 1) {
             double numberBetweenZeroAndOne1 = StdRandom.uniform();
             double numberBetweenZeroAndOne2 = StdRandom.uniform();
             int randomInt = StdRandom.uniform(0, 10);
             double randomNumber = StdRandom.uniform();
 
-            if (ads1.size() > 0 && sad1.size() > 0
-                    && numberBetweenZeroAndOne1 < probabilityOfRemoving) {
+            if (ads1.size() > 0 && sad1.size() > 0 && numberBetweenZeroAndOne1 < 0.3) {
                 if (numberBetweenZeroAndOne2 < 0.5) {
                     DequeOperation fs = new DequeOperation("removeLast");
                     process.addOperation(fs);
