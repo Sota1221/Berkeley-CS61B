@@ -7,6 +7,9 @@ import org.junit.Test;
 
 public class TestArrayDeque1B {
 
+    private static int numberOfTrials = 20;
+    private static double probabilityOfRemoving = 0.3;
+    private static double probabilityForFirst = 0.5;
 
     @Test
     public void arrayDequeTest() {
@@ -16,14 +19,15 @@ public class TestArrayDeque1B {
         OperationSequence process = new OperationSequence();
 
 
-        for (int i = 0; i < 20; i += 1) {
+        for (int i = 0; i < numberOfTrials; i += 1) {
             double numberBetweenZeroAndOne1 = StdRandom.uniform();
             double numberBetweenZeroAndOne2 = StdRandom.uniform();
             int randomInt = StdRandom.uniform(0, 10);
             double randomNumber = StdRandom.uniform();
 
-            if (ads1.size() > 0 && sad1.size() > 0 && numberBetweenZeroAndOne1 < 0.3) {
-                if (numberBetweenZeroAndOne2 < 0.5) {
+            if (ads1.size() > 0 && sad1.size() > 0 &&
+                    numberBetweenZeroAndOne1 < probabilityOfRemoving) {
+                if (numberBetweenZeroAndOne2 < probabilityForFirst) {
                     DequeOperation fs = new DequeOperation("removeLast");
                     process.addOperation(fs);
                     int lastSad1 = sad1.removeLast();
@@ -39,7 +43,7 @@ public class TestArrayDeque1B {
                             firstAds1, firstSad1);
                 }
             } else {
-                if (numberBetweenZeroAndOne2 < 0.5) {
+                if (numberBetweenZeroAndOne2 < probabilityForFirst) {
                     DequeOperation fs = new DequeOperation("addFirst", randomInt);
                     process.addOperation(fs);
                     sad1.addLast(randomInt);
@@ -55,7 +59,7 @@ public class TestArrayDeque1B {
         while (sad1.size() > 0 && ads1.size() > 0) {
             double randomNumber3 = StdRandom.uniform();
 
-            if (randomNumber3 < 0.5) {
+            if (randomNumber3 < probabilityForFirst) {
                 DequeOperation fs = new DequeOperation("removeLast");
                 process.addOperation(fs);
                 int lastSad1 = sad1.removeLast();

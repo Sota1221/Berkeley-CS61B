@@ -17,7 +17,7 @@ public class Palindrome {
         }
         Deque stringDeque = wordToDeque(word);
         int len = stringDeque.size();
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < (len - 1) / 2; i++) {
             if (stringDeque.get(i) != stringDeque.get(len - 1 - i)) {
                 return false;
             }
