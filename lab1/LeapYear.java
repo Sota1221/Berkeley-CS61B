@@ -7,7 +7,7 @@ public class LeapYear {
      *  @param  year to be analyzed
      */
     private static void checkLeapYear(int year) {
-        if (LeapYear.isLeapYear(year)) {
+        if (isLeapYear(year)) {
             System.out.printf("%d is a leap year.\n", year);
         } else {
             System.out.printf("%d is not a leap year.\n", year);

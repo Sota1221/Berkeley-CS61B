@@ -31,7 +31,6 @@ public class Palindrome {
         }
         Deque stringDeque = wordToDeque(word);
         int len = stringDeque.size();
-        OffByOne obo = new OffByOne();
         for (int i = 0; i < len; i++) {
             Character char1 = (Character) stringDeque.get(i);
             Character char2 = (Character) stringDeque.get(len - 1 - i);
