@@ -29,12 +29,10 @@ public class Palindrome {
         if (word.length() == 1 || word.length() == 0) {
             return true;
         }
-        Deque stringDeque = wordToDeque(word);
+        Deque<Character> stringDeque = wordToDeque(word);
         int len = stringDeque.size();
         for (int i = 0; i < (len - 1) / 2; i++) {
-            Character char1 = (Character) stringDeque.get(i);
-            Character char2 = (Character) stringDeque.get(len - 1 - i);
-            if (!cc.equalChars(char1, char2)) {
+            if (!cc.equalChars(stringDeque.get(i), stringDeque.get(len - 1 - i))) {
                 return false;
             }
         }
