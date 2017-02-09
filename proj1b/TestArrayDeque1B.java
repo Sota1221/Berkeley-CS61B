@@ -10,6 +10,7 @@ public class TestArrayDeque1B {
     private static int numberOfTrials = 20;
     private static double probabilityOfRemoving = 0.3;
     private static double probabilityForFirst = 0.5;
+    private int currentSize = 0;
 
     @Test
     public void arrayDequeTest() {
@@ -18,33 +19,32 @@ public class TestArrayDeque1B {
         ArrayDequeSolution<Integer> ads1 = new ArrayDequeSolution<>();
         OperationSequence process = new OperationSequence();
 
-
-        for (int i = 0; i < numberOfTrials; i += 1) {
+        while (true) {
             double numberBetweenZeroAndOne1 = StdRandom.uniform();
             double numberBetweenZeroAndOne2 = StdRandom.uniform();
-            int randomInt = StdRandom.uniform(0, 10);
-            double randomNumber = StdRandom.uniform();
-
-            if (ads1.size() > 0 && sad1.size() > 0 &&
-                    numberBetweenZeroAndOne1 < probabilityOfRemoving) {
+            Integer randomInt = StdRandom.uniform(0, 10);
+            if (currentSize > 0
+                    && numberBetweenZeroAndOne1 < probabilityOfRemoving) {
+                currentSize -= 1;
                 if (numberBetweenZeroAndOne2 < probabilityForFirst) {
                     DequeOperation fs = new DequeOperation("removeLast");
                     process.addOperation(fs);
-                    int lastSad1 = sad1.removeLast();
-                    int lastAds1 = ads1.removeLast();
+                    Integer lastSad1 = sad1.removeLast();
+                    Integer lastAds1 = ads1.removeLast();
                     assertEquals(process.toString(),
                             lastAds1, lastSad1);
                 } else {
                     DequeOperation fs = new DequeOperation("removeFirst");
                     process.addOperation(fs);
-                    int firstSad1 = sad1.removeFirst();
-                    int firstAds1 = ads1.removeFirst();
+                    Integer firstSad1 = sad1.removeFirst();
+                    Integer firstAds1 = ads1.removeFirst();
                     assertEquals(process.toString(),
                             firstAds1, firstSad1);
                 }
             } else {
+                currentSize += 1;
                 if (numberBetweenZeroAndOne2 < probabilityForFirst) {
-                    DequeOperation fs = new DequeOperation("addFirst", randomInt);
+                    DequeOperation fs = new DequeOperation("addLast", randomInt);
                     process.addOperation(fs);
                     sad1.addLast(randomInt);
                     ads1.addLast(randomInt);
@@ -54,25 +54,6 @@ public class TestArrayDeque1B {
                     sad1.addFirst(randomInt);
                     ads1.addFirst(randomInt);
                 }
-            }
-        }
-        while (sad1.size() > 0 && ads1.size() > 0) {
-            double randomNumber3 = StdRandom.uniform();
-
-            if (randomNumber3 < probabilityForFirst) {
-                DequeOperation fs = new DequeOperation("removeLast");
-                process.addOperation(fs);
-                int lastSad1 = sad1.removeLast();
-                int lastAds1 = ads1.removeLast();
-                assertEquals(process.toString(),
-                        lastAds1, lastSad1);
-            } else {
-                DequeOperation fs = new DequeOperation("removeFirst");
-                process.addOperation(fs);
-                int firstSad1 = sad1.removeFirst();
-                int firstAds1 = ads1.removeFirst();
-                assertEquals(process.toString(),
-                        firstAds1, firstSad1);
             }
         }
     }
