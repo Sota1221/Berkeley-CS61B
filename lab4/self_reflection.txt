@@ -12,15 +12,15 @@ A:
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A:My resize method and its helper. I thought the helper method made this code more readable. However, since it takes a lot of parameters and has a complicated structure, it does not play an important role as "helper" function in terms of readability.
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A:There is a better way to divide cases. 
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A:I would use less if statements.
 
 -----
 
@@ -32,7 +32,7 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A:It is easier to follow this code than to follow my ArrayDeque. Coherent structure.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
@@ -52,4 +52,4 @@ Meta:
 
 Q: This is the first time we've tried something like this. Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: I would like to get more detailed feedback from TA or lab assistants.
