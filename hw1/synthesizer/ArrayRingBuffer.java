@@ -64,7 +64,8 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
             throw new RuntimeException("Ring buffer underflow");
         }
         T oldestItem = this.rb[first];
-        this.rb[first] = null;
+        T[] defaultValue = (T[]) new Object[1];
+        this.rb[first] = defaultValue[0];
         this.fillCount -= 1;
         if (isEmpty()) {
             this.first = 0;
