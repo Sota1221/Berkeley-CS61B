@@ -2,7 +2,7 @@
 // package <package>
 package synthesizer;
 import javax.swing.text.html.HTMLDocument;
-import edu.princeton.cs.algs4.StdDraw;
+//import edu.princeton.cs.algs4.StdDraw;
 import java.util.Iterator;
 
 
@@ -25,7 +25,8 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         //       this.capacity should be set appropriately. Note that the local variable
         //       here shadows the field we inherit from AbstractBoundedQueue, so
         //       you'll need to use this.capacity to set the capacity.
-        super(capacity);
+        this.capacity = capacity;
+        this.fillCount = 0;
         this.rb = (T[]) new Object[this.capacity];
         this.first = 0;
         this.last = 0;
@@ -65,11 +66,16 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         T oldestItem = this.rb[first];
         this.rb[first] = null;
         this.fillCount -= 1;
-        if (this.first == 0) {
-            this.first = this.capacity - 1;
+        if (isEmpty()) {
+            this.first = 0;
+            this.last = 0;
             return oldestItem;
         }
-        this.first -= 1;
+        if (this.first == this.capacity - 1) {
+            this.first = 0;
+            return oldestItem;
+        }
+        this.first += 1;
         return oldestItem;
     }
 
