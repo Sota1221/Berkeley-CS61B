@@ -52,10 +52,6 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         this.last += 1;
     }
 
-    @Override
-    public void setFillCount(int x) {
-        this.fillCount = x;
-    }
 
     /**
      * Dequeue oldest item in the ring buffer. If the buffer is empty, then

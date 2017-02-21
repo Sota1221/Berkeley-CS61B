@@ -13,7 +13,6 @@ public interface BoundedQueue<T> extends Iterable<T> {
 
     T peek();            // return (but do not delete) item from the front
 
-    void setFillCount(int x);
 
     Iterator<T> iterator();
 
