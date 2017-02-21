@@ -31,7 +31,8 @@ public class GuitarString {
         //
         //       Make sure that your random numbers are different from each other.
         for (int index = 0; index < this.buffer.capacity(); index++) {
-            this.buffer.enqueue(Math.random() - 0.5);
+            double r = Math.random() - 0.5;
+            this.buffer.enqueue(r);
         }
     }
 
