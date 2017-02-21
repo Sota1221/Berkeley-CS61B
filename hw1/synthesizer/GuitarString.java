@@ -20,6 +20,10 @@ public class GuitarString {
         //       accuracy, use the Math.round() function before casting.
         //       Your buffer should be initially filled with zeros.
         this.buffer = new ArrayRingBuffer<Double>((int) Math.round(SR / frequency));
+        while (this.buffer.fillCount() != this.buffer.capacity()) {
+            this.buffer.enqueue(0.0);
+        }
+        this.buffer.setFillCount(0);
     }
 
 
@@ -33,10 +37,6 @@ public class GuitarString {
         while (this.buffer.fillCount() != 0) {
             this.buffer.dequeue();
         }
-        while (this.buffer.fillCount() != this.buffer.capacity()) {
-            this.buffer.enqueue(0.0);
-        }
-        this.buffer.setFillCount(0);
         while (this.buffer.fillCount() != this.buffer.capacity()) {
             this.buffer.enqueue(Math.random() - 0.5);
         }
