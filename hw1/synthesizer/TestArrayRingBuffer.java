@@ -10,13 +10,15 @@ public class TestArrayRingBuffer {
     @Test
     public void someTest() {
         ArrayRingBuffer<Integer> arb = new ArrayRingBuffer<Integer>(10);
-        arb.enqueue(new Integer(3));
-        arb.enqueue(new Integer(1));
-        arb.enqueue(new Integer(9));
-        assertEquals(new Integer(3), arb.peek());
+        for (int i = 0; i < arb.capacity(); i++) {
+            arb.enqueue(new Integer(i));
+        }
+        for (int k = 0; k < arb.capacity() - 1; k++) {
+            assertEquals(new Integer(k), arb.dequeue());
+        }
+        arb.enqueue(new Integer(10));
         arb.dequeue();
-        assertEquals(new Integer(1), arb.dequeue());
-        assertEquals(new Integer(9), arb.peek());
+        assertEquals(new Integer(10), arb.peek());
     }
 
     /** Calls tests for ArrayRingBuffer. */

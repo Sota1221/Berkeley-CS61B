@@ -1,7 +1,7 @@
 // Make sure to make this class a part of the synthesizer package
 // package <package>
 package synthesizer;
-import javax.swing.text.html.HTMLDocument;
+//import javax.swing.text.html.HTMLDocument;
 //import edu.princeton.cs.algs4.StdDraw;
 import java.util.Iterator;
 
@@ -85,6 +85,9 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     @Override
     public T peek() {
         // Return the first item. None of your instance variables should change.
+        if (isEmpty()) {
+            throw new RuntimeException("Ring buffer underflow");
+        }
         return this.rb[first];
     }
 
