@@ -52,6 +52,11 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         this.last += 1;
     }
 
+    @Override
+    public void setFillCount(int x) {
+        this.fillCount = x;
+    }
+
     /**
      * Dequeue oldest item in the ring buffer. If the buffer is empty, then
      * throw new RuntimeException("Ring buffer underflow"). Exceptions
@@ -64,8 +69,7 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
             throw new RuntimeException("Ring Buffer Underflow");
         }
         T oldestItem = this.rb[first];
-        T[] defaultValue = (T[]) new Object[1];
-        this.rb[first] = defaultValue[0];
+        this.rb[first] = null;
         this.fillCount -= 1;
         if (isEmpty()) {
             this.first = 0;
@@ -79,6 +83,7 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         this.first += 1;
         return oldestItem;
     }
+
 
     /**
      * Return oldest item, but don't remove it.
