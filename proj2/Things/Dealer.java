@@ -36,13 +36,12 @@ public class Dealer {
 //        Database.saveTable(newTable);
 //        // load the file somehow
 //        return "dealStore!!, Table t = " + fileName;
-        fileName = "examples/" + fileName;
         try{
             File file = new File(fileName + ".tbl");
             if (checkBeforeReadfile(file)){
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String[] columnTitles = br.readLine().split("\\s*,\\s*");
-                Table newTable = new Table(fileName.split("/")[1], columnTitles);
+                Table newTable = new Table(fileName, columnTitles);
                 String str = br.readLine();
                 while(str != null){
                     newTable.addRowLast(str.split("\\s*,\\s*"));
