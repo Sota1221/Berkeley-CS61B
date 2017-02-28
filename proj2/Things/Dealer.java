@@ -36,24 +36,25 @@ public class Dealer {
 //        Database.saveTable(newTable);
 //        // load the file somehow
 //        return "dealStore!!, Table t = " + fileName;
+        fileName = "examples/" + fileName;
         try{
             File file = new File(fileName + ".tbl");
             if (checkBeforeReadfile(file)){
                 BufferedReader br = new BufferedReader(new FileReader(file));
-                String[] columnTitles = br.readLine().split(",");
-                Table newTable = new Table(fileName, columnTitles);
+                String[] columnTitles = br.readLine().split("\\s*,\\s*");
+                Table newTable = new Table(fileName.split("/")[1], columnTitles);
                 String str = br.readLine();
                 while(str != null){
-                    newTable.addRowLast(str.split(","));
+                    newTable.addRowLast(str.split("\\s*,\\s*"));
                     str = br.readLine();
                 }
                 Database.saveTable(newTable);
                 br.close();
             }else{
-                System.out.println("couldn't open or find the file.");
+                System.out.println("ERROR: *"); //couldn't open or find the file.
             }
         }catch(FileNotFoundException e){
-            System.out.println(e);
+            System.out.println("ERROR: " + e);
         }catch(IOException e){
             System.out.println(e);
         }
