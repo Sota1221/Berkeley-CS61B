@@ -147,12 +147,12 @@ public class Table<T> {
 //        LinkedList<T> stringList = new LinkedList();
         String returnString = "";
         for (int i = 0; i < this.zeroRow.size() - 1; i ++) {
-            returnString = returnString + this.zeroRow.get(i) + ", ";
+            returnString = returnString + this.zeroRow.get(i) + ",";
         }
         returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n";
         for (LinkedList elem : this.zeroColumn) {
             for (int i = 0; i < elem.size() - 1; i++) {
-                returnString = returnString + elem.get(i) + ", ";
+                returnString = returnString + elem.get(i) + ",";
             }
             returnString = returnString + elem.get(elem.size() - 1) + "\n";
         }
