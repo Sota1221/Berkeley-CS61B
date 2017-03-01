@@ -156,7 +156,7 @@ public class Dealer {
         }
         for (int i = 0; i < joited.getNumCol(); i++) {
             for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++){
-                if (joited.getColumnName()[i] == joited.getColumnName()[indexToBeDeleted]) {
+                if (joited.getColumnName()[i].equals(joited.getColumnName()[indexToBeDeleted])) {
                     joited.removeColmnTitle(indexToBeDeleted);
                     joited.removeColumn(indexToBeDeleted);
                 }

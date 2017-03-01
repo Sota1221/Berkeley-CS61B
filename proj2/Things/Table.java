@@ -25,8 +25,8 @@ public class Table<T> {
         for (String s : columnTitles) {
             zeroRow.add(s);
         }
-        System.out.println("zeroRow is now: ");
-        System.out.println(zeroRow.toString());
+//        System.out.println("zeroRow is now: ");
+//        System.out.println(zeroRow.toString());
         // size() method でelement(row)の個数はわかる！
     }
 
