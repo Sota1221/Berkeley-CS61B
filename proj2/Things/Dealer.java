@@ -110,33 +110,47 @@ public class Dealer {
                 return "There isn't table called " + tableName + " in database...";
             }
         }
-        if (tableName.length != 1) {
-            return joinSelect(columnTitle, tableName, condition);
-        } else {
-            Table originalTable = Database.getTable(tableName[0]);
-            for (String elem : columnTitle) {
-                if (!(Arrays.asList(originalTable.getColumnName()).contains(elem))){
-                    return "There isn't a column called " + elem + " in " + tableName;
+        Table temp;
+        int tableNameLen = tableName.length;
+        if (tableNameLen != 1) {
+            while (true) {
+                if (tableNameLen == 2) {
+                    String[] newTableName = new String[]{tableName[0], tableName[1]};
+                    temp = joinSelect(columnTitle, newTableName, condition);
+                    break;
+                } else {
+                    String[] newTableName = new String[]{tableName[0], tableName[1]};
+                    joinSelect(columnTitle, newTableName, condition);
+                    for (int i = 2; i < tableName.length; i++) {
+                        tableName[i - 1] = tableName[i];
+                    }
+                    tableName[0] = "joinedTable";
+                    tableNameLen -= 1;
                 }
             }
-            LinkedList[] newCol;
-            Table anonTable;
-            if (columnTitle[0].equals("*")) {
-                anonTable = new Table("anon", originalTable.getColumnName());
-                newCol = new LinkedList[originalTable.getNumCol()];
-            } else {
-                anonTable = new Table("anon", columnTitle);
-                newCol = new LinkedList[columnTitle.length];
-            }
-            for (int i = 0; i < newCol.length; i++) {
-                newCol[i] = (LinkedList) originalTable.getColumn(columnTitle[i]);
-                anonTable.addColumnLast(newCol[i]);  // specified column added to anon table
-            }
-            return anonTable.toString();
+        } else {
+            temp = Database.getTable(tableName[0]);
         }
+        if (columnTitle[0].equals("*")) {
+            return temp.toString();
+        }
+        for (String elem : columnTitle) {
+            if (!(Arrays.asList(temp.getColumnName()).contains(elem))){
+                return "There isn't a column called " + elem + " in " + tableName;
+            }
+        }
+        LinkedList[] newCol;
+        Table anonTable;
+        anonTable = new Table("anon", columnTitle);
+        newCol = new LinkedList[columnTitle.length];
+        for (int i = 0; i < newCol.length; i++) {
+            newCol[i] = (LinkedList) temp.getColumn(columnTitle[i]);
+            anonTable.addColumnLast(newCol[i]);  // specified column added to anon table
+        }
+        return anonTable.toString();
     }
 
-    private static String joinSelect(String[] columnTitle, String[] tableName, String condition) {
+    private static Table joinSelect(String[] columnTitle, String[] tableName, String condition) {
         Table tempTableP =  Database.getTable(tableName[0]);
         Table tempTableQ = Database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
@@ -162,7 +176,8 @@ public class Dealer {
                 }
             }
         }
-        return joited.toString();
+        Database.saveTable(joited);
+        return joited;
     }
 
     private static String[] combine(String[] p, String[] q) {
