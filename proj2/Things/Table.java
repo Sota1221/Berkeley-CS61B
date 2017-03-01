@@ -40,8 +40,15 @@ public class Table<T> {
 
     public int getNumCol() {return  this.zeroRow.size();}
 
+    public int getNumRow() { return this.zeroColumn.size(); }
+
     public boolean isFull(){
         return this.zeroColumn.size() >= this.columnCap;
+    }
+
+    public void deleteColumn(int i) {
+        this.zeroRow.remove(i);
+        return;
     }
 
     // trimToSize() method でarrayListのcontainer減らせる
@@ -102,6 +109,11 @@ public class Table<T> {
             theRow.remove(i);
             this.zeroColumn.set(j, theRow);
         }
+    }
+
+    public void removeColmnTitle(int i) {
+        this.zeroRow.remove(i);
+        return;
     }
 
     // get column or row

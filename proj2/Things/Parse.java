@@ -109,8 +109,8 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
-            String[] columnName = m.group(2).split(", "); // x, y ...
-            String originalTableName = m.group(3); // T1
+            String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ...
+            String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1
             String condition = m.group(4); // x > 2
             String result = Dealer.dealSelect(columnName, originalTableName, condition); // handling select
             String[] s = result.split("\n"); // putting string repr into array
@@ -243,8 +243,8 @@ public class Parse {
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
         }
-        String[] columnTitle = m.group(1).split(","); // x
-        String tableName = m.group(2);   // T1
+        String[] columnTitle = m.group(1).split("\\s*,\\s*"); // x
+        String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
         String condition = m.group(3);   // x > 2
         return Dealer.dealSelect(columnTitle, tableName, condition);
 
