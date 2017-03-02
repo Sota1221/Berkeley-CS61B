@@ -109,10 +109,20 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
-            String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ...
+            String[] columnTitle;
+            String newColTitle;
+            if (m.group(2).contains("as")) {
+                String[] temp = m.group(2).split("\\s* as \\s*");
+                columnTitle = temp[0].split("\\s*,\\s*");
+                newColTitle = temp[1];
+            } else {
+                columnTitle = m.group(2).split("\\s*,\\s*"); // x
+                newColTitle = null;
+            }
+     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
             String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1
             String condition = m.group(4); // x > 2
-            String result = Dealer.dealSelect(columnName, originalTableName, condition); // handling select
+            String result = Dealer.dealSelect(columnTitle, originalTableName, condition, newColTitle); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
             //System.out.println("s.length == " + s.length);
@@ -243,10 +253,19 @@ public class Parse {
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
         }
-        String[] columnTitle = m.group(1).split("\\s*,\\s*"); // x
+        String[] columnTitle;
+        String newColTitle;
+        if (m.group(1).contains("as")) {
+            String[] temp = m.group(1).split("\\s* as \\s*");
+            columnTitle = temp[0].split("\\s*,\\s*");
+            newColTitle = temp[1];
+        } else {
+            columnTitle = m.group(1).split("\\s*,\\s*"); // x
+            newColTitle = null;
+        }
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
         String condition = m.group(3);   // x > 2
-        return Dealer.dealSelect(columnTitle, tableName, condition);
+        return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
 
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
         // select x from T1 where x > 2 をした時は、

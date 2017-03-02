@@ -1,6 +1,9 @@
 package Things;
 
+import com.sun.scenario.effect.impl.state.LinearConvolveKernel;
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import db.Database;
+import sun.awt.image.ImageWatched;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -101,7 +104,7 @@ public class Dealer {
         // make a string to return. ここちゃんとできてない
         return "There isn't such the table";
     }
-    public static String dealSelect(String[] columnTitle, String[] tableName, String condition){
+    public static String dealSelect(String[] columnTitle, String[] tableName, String condition, String newColTitle){
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
 //        String condition = m.group(3);   // x > 2
@@ -134,20 +137,194 @@ public class Dealer {
         if (columnTitle[0].equals("*")) {
             return temp.toString();
         }
-        for (String elem : columnTitle) {
-            if (!(Arrays.asList(temp.getColumnName()).contains(elem))){
-                return "There isn't a column called " + elem + " in " + tableName;
+        Table anonTable = new Table("anon", columnTitle);
+        for (int k = 0; k < columnTitle.length; k++) {
+            LinkedList[] newColumn = new LinkedList[columnTitle.length];
+            String[] array = containOperator(columnTitle[k]); // e.g. array = ["x", "+", "y"]
+            if (temp.getExactColName(array[0]) == null) {
+                    return "There isn't a column called " + array[0] + " in " + tableName;
+            }
+            if (temp.getExactColName(array[2]) == null) {
+                return "There isn't a column called " + array[2] + " in " + tableName;
+            }
+            Integer[] convertedInt = new Integer[temp.getNumRow()];
+            Float[] convertedFloat = new Float[temp.getNumRow()];
+            boolean flagFirst = false;
+            boolean flagSecond = false;
+            if (!(array.equals(null))) {
+                if (temp.checkType(array[0], "int")) {
+                    convertedInt = convertInt(temp.getColumn(array[0]));
+                    flagFirst = true;
+                }
+                if (temp.checkType(array[0], "float")) {
+                    convertedFloat = convertFloat(temp.getColumn(array[0]));
+                }
+                if (temp.checkType(array[2], "int")) {
+                    if (flagFirst) {
+                        flagSecond = true;
+                        Integer[] tempIntArray = convertInt(temp.getColumn(array[2]));
+                        for (int t = 0; t < tempIntArray.length; t++) {
+                            convertedInt[t] = operateInt(convertedInt[t], tempIntArray[t], array[1]);
+                        }
+                    } else {
+                        convertedInt = convertInt(temp.getColumn(array[2]));
+                    }
+                }
+                if (temp.checkType(array[2], "float")) {
+                    if (!(flagFirst)) {
+                        Float[] tempFloatArray = convertFloat(temp.getColumn(array[2]));
+                        for (int t = 0; t < tempFloatArray.length; t++) {
+                            convertedFloat[t] = operateFloat(convertedFloat[t], tempFloatArray[t], array[1]);
+                        }
+                    } else {
+                        flagSecond = true;
+                        convertedFloat = convertFloat(temp.getColumn(array[2]));
+                    }
+                }
+                if (flagFirst && flagSecond) {
+                    anonTable.addColumnLast(convertIntToString(convertedInt));
+                } else if (flagFirst && !flagSecond) {
+                    Float[] tempNewCol = new Float[temp.getNumRow()];
+                    for (int a = 0; a < tempNewCol.length; a++) {
+                        tempNewCol[a] = operateFloatInt(convertedFloat[a], convertedInt[a], array[1], false);
+                    }
+                    anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                } else if (!flagFirst && flagSecond) {
+                    Float[] tempNewCol = new Float[temp.getNumRow()];
+                    for (int b = 0; b < tempNewCol.length; b++) {
+                        tempNewCol[b] = operateFloatInt(convertedFloat[b], convertedInt[b], array[1], true);
+                    }
+                    anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                } else {
+                    anonTable.addColumnLast(convertFloatToString(convertedFloat));
+                }
+            } else {
+                if (temp.getExactColName(columnTitle[k]) == null) {
+                    return "There isn't a column called " + columnTitle[k] + " in " + tableName;
+                }
+                anonTable.addColumnLast(temp.getColumn(columnTitle[k]));
             }
         }
-        LinkedList[] newCol;
-        Table anonTable;
-        anonTable = new Table("anon", columnTitle);
-        newCol = new LinkedList[columnTitle.length];
-        for (int i = 0; i < newCol.length; i++) {
-            newCol[i] = (LinkedList) temp.getColumn(columnTitle[i]);
-            anonTable.addColumnLast(newCol[i]);  // specified column added to anon table
-        }
         return anonTable.toString();
+    }
+
+
+    private static String[] convertFloatToString(Float[] array) {
+        String[] result = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(null)) {
+                result[i] = "NaN";
+            } else {
+                result[i] = Float.toString(array[i]);
+            }
+        }
+        return result;
+    }
+
+    private static String[] convertIntToString(Integer[] array) {
+        String[] result = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(null)) {
+                result[i] = "NaN";
+            } else {
+                result[i] = Integer.toString(array[i]);
+            }
+        }
+        return result;
+    }
+
+    private static Float operateFloatInt(Float a, Integer b, String operator, boolean flag) {
+        if (operator.equals("+")) {
+                return a + b;
+        } else if (operator.equals("-")) {
+            if (flag) {
+                return a - b;
+            }
+            return b - a;
+        } else if (operator.equals("*")) {
+            return a * b;
+        } else {
+            if (flag) {
+                if (b == 0) {
+                    return null;
+                }
+                return a / b;
+            }
+            if (a == 0) {
+                return null;
+            }
+            return b / a;
+        }
+    }
+
+    private static Integer operateInt(Integer a, Integer b, String operator) {
+        if (operator.equals("+")) {
+            return a + b;
+        } else if (operator.equals("-")) {
+            return a - b;
+        } else if (operator.equals("*")) {
+            return a * b;
+        } else {
+            if (b == 0) {
+                return null;
+            }
+            return a / b;
+        }
+    }
+
+    private static Float operateFloat(Float a, Float b, String operator) {
+        if (operator.equals("+")) {
+            return a + b;
+        } else if (operator.equals("-")) {
+            return a - b;
+        } else if (operator.equals("*")) {
+            return a * b;
+        } else {
+            if (b == 0) {
+                return null;
+            }
+            return a / b;
+        }
+    }
+
+    private static Integer[] convertInt(List<String> p) {
+        Integer[] array = new Integer[p.size()];
+        for (int i = 0; i < p.size(); i++) {
+            array[i] = Integer.parseInt((p.get(i)));
+        }
+        return array;
+    }
+
+    private static Float[] convertFloat(List<String> p) {
+        Float[] array = new Float[p.size()];
+        for (int i = 0; i < p.size(); i++) {
+            array[i] = Float.parseFloat(p.get(i));
+        }
+        return array;
+    }
+
+    private static boolean contains(String[] array, String str) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].split("\\s* \\s*")[0].equals(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String[] containOperator(String str) {
+        String[] array;
+        if (str.length() == 1) {
+            array = str.split("\\s*\\s*");
+        } else {
+            array = str.split("\\s* \\s*");
+        }
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("+") || array[i].equals("-") || array[i].equals("*") || array[i].equals("/")) {
+                    return array;
+            }
+        }
+        return null;
     }
 
     private static Table joinSelect(String[] columnTitle, String[] tableName, String condition) {

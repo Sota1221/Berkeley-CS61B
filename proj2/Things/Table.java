@@ -46,6 +46,33 @@ public class Table<T> {
         return this.zeroColumn.size() >= this.columnCap;
     }
 
+    public String getExactColName(String colName) {
+        for (int i = 0; i < this.zeroRow.size(); i++) {
+            if (this.zeroRow.get(i).split("\\*s \\*s")[0].equals(colName)) {
+                return this.zeroRow.get(i);
+            }
+        }
+        System.out.print("no such column");
+        return null;
+    }
+
+    public boolean checkType(String colName, String type) {
+        if (getExactColName(colName).split("\\*s \\*s")[1].equals(type)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasColumnType(String str) {
+        String[] colTitles = getColumnName();
+        for (int i = 0; i < colTitles.length; i++) {
+            if (colTitles[i].split(" ")[1].equals(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void deleteColumn(int i) {
         this.zeroRow.remove(i);
         return;
@@ -132,10 +159,17 @@ public class Table<T> {
         return returnList;
     }
 
+    private boolean contain(String str0, String str1) {
+        if (str0.split("\\s* \\s*")[0].equals(str1)) {
+            return true;
+        }
+        return false;
+    }
+
     public List<T> getColumn(String columnName) { // for column name
         int counter = 0;
         for (int i = 0; i < zeroRow.size(); i++) {
-            if ((zeroRow.get(i).equals(columnName))) {
+            if ((contain(zeroRow.get(i), columnName))) {
                 counter = i;
                 break;
             }
