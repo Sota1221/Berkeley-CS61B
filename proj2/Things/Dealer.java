@@ -1,26 +1,26 @@
-package Things;
+package things;
 
 /*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
 /*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
 import db.Database;
 /*import sun.awt.image.ImageWatched;*/
 
-import java.util.ArrayList;
+/*import java.util.ArrayList; */
 import java.util.LinkedList;
 import java.util.List;
-import java.util.*;
+/*import java.util.*; */
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.StringJoiner;
+/* import java.util.StringJoiner; */
 
 
 public class Dealer {
 
-    public static String dealCreateTable(String tableName, String[] columnTitles){
+    public static String dealCreateTable(String tableName, String[] columnTitles) {
 
         Table newTable = new Table(tableName, columnTitles);
         Database.saveTable(newTable);
@@ -31,21 +31,18 @@ public class Dealer {
         return "";
     }
 
-    public static String dealStore(String tableName){
+    public static String dealStore(String tableName) {
         Table t = Database.getTable(tableName);
         // make a file for the table somehow.
         return "dealStore!!, Table t = " + tableName;
     }
 
-    public static String dealLoad(String fileName){
-//        Table newTable = new Table(fileName);
-//        Database.saveTable(newTable);
-//        // load the file somehow
-//        return "dealStore!!, Table t = " + fileName;
-        try{
+    public static String dealLoad(String fileName) {
+        try {
             File file;
             File tempFile0 = new File(fileName + ".tbl");
             File tempFile1 = new File("examples/" + fileName + ".tbl");
+            //checks if file exists in the current directory or examples
             if (!(checkBeforeReadfile(tempFile0) || checkBeforeReadfile(tempFile1))) {
                 return "ERROR: .*"; //couldn't open or find the file.
             } else if (checkBeforeReadfile(tempFile0)) {
@@ -54,26 +51,29 @@ public class Dealer {
                 file = tempFile1;
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
+            // creates column titles by reading the first line
             String[] columnTitles = br.readLine().split("\\s*,\\s*");
             Table newTable = new Table(fileName, columnTitles);
             String str = br.readLine();
-            while(str != null){
+            // reads files line by line and adds rows
+            while (str != null) {
                 newTable.addRowLast(str.split("\\s*,\\s*"));
                 str = br.readLine();
             }
             Database.saveTable(newTable);
             br.close();
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("ERROR: " + e);
-        }catch(IOException e){
+        } catch (IOException e) {
             System.out.println(e);
         }
         return "";
     }
 
-    private static boolean checkBeforeReadfile(File file){
-        if (file.exists()){
-            if (file.isFile() && file.canRead()){
+    // checks if the file exists and works
+    private static boolean checkBeforeReadfile(File file) {
+        if (file.exists()) {
+            if (file.isFile() && file.canRead()) {
                 return true;
             }
         }
@@ -81,12 +81,12 @@ public class Dealer {
     }
 
 
-    public static String dealDrop(String tableName){
+    public static String dealDrop(String tableName) {
         Database.removeTable(tableName);
         return "";
     }
 
-    public static String dealInsert(String tableName, String[] values){
+    public static String dealInsert(String tableName, String[] values) {
         if (!(Database.hasTable(tableName))) {
             return "There isn't table called " + tableName + " in database...";
         }
@@ -96,7 +96,7 @@ public class Dealer {
         return "";
     }
 
-    public static String dealPrint(String tableName){
+    public static String dealPrint(String tableName) {
         if (Database.hasTable(tableName)) {
             Table t = Database.getTable(tableName);
             return t.toString();
@@ -104,23 +104,33 @@ public class Dealer {
         // make a string to return. ここちゃんとできてない
         return "There isn't such the table";
     }
-    public static String dealSelect(String[] columnTitle, String[] tableName, String condition, String newColTitle){
+    public static String dealSelect(String[] columnTitle,
+                                    String[] tableName, String condition, String newColTitle) {
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
 //        String condition = m.group(3);   // x > 2
+
+        // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
                 return "There isn't table called " + tableName + " in database...";
             }
         }
+
         Table temp;
         int tableNameLen = tableName.length;
+
+        // joins tables if there are at least two tables.
+        // puts the result into temp.
         if (tableNameLen != 1) {
             while (true) {
+                // if there two tables
                 if (tableNameLen == 2) {
                     String[] newTableName = new String[]{tableName[0], tableName[1]};
                     temp = joinSelect(columnTitle, newTableName, condition);
                     break;
+                // if there are more than two table.
+                // uses recursion
                 } else {
                     String[] newTableName = new String[]{tableName[0], tableName[1]};
                     joinSelect(columnTitle, newTableName, condition);
@@ -131,13 +141,19 @@ public class Dealer {
                     tableNameLen -= 1;
                 }
             }
+        // if there is only one table.
+        // no join
         } else {
             temp = Database.getTable(tableName[0]);
         }
+
+        // if oolumn is *, uses all columns (original table itself)
         if (columnTitle[0].equals("*")) {
             return temp.toString();
         }
+
         String[] exactColTitle = new String[columnTitle.length];
+        // puts exact column names into exactColTitle (x -> x int)
         for (int j = 0; j < columnTitle.length; j++) {
             String name = temp.getExactColName(columnTitle[j]);
             if (newColTitle != null) {
@@ -148,14 +164,22 @@ public class Dealer {
                 exactColTitle[j] = name;
             }
         }
+
+        // creates a new table
         Table anonTable = new Table("anon", exactColTitle);
+
+        // sees the given columns one by one
         for (int k = 0; k < columnTitle.length; k++) {
-            LinkedList[] newColumn = new LinkedList[columnTitle.length];
+            // checks if the given column name has operator
+            // if it exits, separates it into three elements (see below)
+            // if not, array = null
             String[] array = containOperator(columnTitle[k]); // e.g. array = ["x", "+", "y"]
             Integer[] convertedInt = new Integer[temp.getNumRow()];
             Float[] convertedFloat = new Float[temp.getNumRow()];
-            boolean flagFirst = false;
-            boolean flagSecond = false;
+            boolean flagFirst = false;   // e.g. x int -> flagFirst = true
+            boolean flagSecond = false;  // e.g. y int -> flagSecond = true
+
+            // if it has operator
             if (array !=  null) {
                 if (temp.getExactColName(array[0]) == null) {
                     return "There isn't a column called " + array[0] + " in " + tableName;
@@ -163,6 +187,9 @@ public class Dealer {
                 if (temp.getExactColName(array[2]) == null) {
                     return "There isn't a column called " + array[2] + " in " + tableName;
                 }
+
+                // checks the type of x
+                // converts string column into int or float column
                 if (temp.checkType(array[0], "int")) {
                     convertedInt = convertInt(temp.getColumn(array[0]));
                     flagFirst = true;
@@ -170,12 +197,20 @@ public class Dealer {
                 if (temp.checkType(array[0], "float")) {
                     convertedFloat = convertFloat(temp.getColumn(array[0]));
                 }
+
+                // checks the type of y
+                // converts string column into int or float column
+                /* if x and y have the same type,
+                   combines the the column created above with the new converted column
+                 */
+                // if not, creates another column
                 if (temp.checkType(array[2], "int")) {
                     if (flagFirst) {
                         flagSecond = true;
                         Integer[] tempIntArray = convertInt(temp.getColumn(array[2]));
                         for (int t = 0; t < tempIntArray.length; t++) {
-                            convertedInt[t] = operateInt(convertedInt[t], tempIntArray[t], array[1]);
+                            convertedInt[t] = operateInt(convertedInt[t],
+                                                         tempIntArray[t], array[1]);
                         }
                     } else {
                         convertedInt = convertInt(temp.getColumn(array[2]));
@@ -185,30 +220,39 @@ public class Dealer {
                     if (!(flagFirst)) {
                         Float[] tempFloatArray = convertFloat(temp.getColumn(array[2]));
                         for (int t = 0; t < tempFloatArray.length; t++) {
-                            convertedFloat[t] = operateFloat(convertedFloat[t], tempFloatArray[t], array[1]);
+                            convertedFloat[t] = operateFloat(convertedFloat[t],
+                                                tempFloatArray[t], array[1]);
                         }
                     } else {
                         flagSecond = true;
                         convertedFloat = convertFloat(temp.getColumn(array[2]));
                     }
                 }
+
+                // Accoding to the types of x and y, add their columns into the new table
+                // x int, y int
                 if (flagFirst && flagSecond) {
                     anonTable.addColumnLast(convertIntToString(convertedInt));
+                // x int,  y float
                 } else if (flagFirst && !flagSecond) {
                     Float[] tempNewCol = new Float[temp.getNumRow()];
                     for (int a = 0; a < tempNewCol.length; a++) {
                         tempNewCol[a] = operateFloatInt(convertedFloat[a], convertedInt[a], array[1], false);
                     }
                     anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                // x float, y int
                 } else if (!flagFirst && flagSecond) {
                     Float[] tempNewCol = new Float[temp.getNumRow()];
                     for (int b = 0; b < tempNewCol.length; b++) {
                         tempNewCol[b] = operateFloatInt(convertedFloat[b], convertedInt[b], array[1], true);
                     }
                     anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                // x float, y float
                 } else {
                     anonTable.addColumnLast(convertFloatToString(convertedFloat));
                 }
+
+            // if no operator
             } else {
                 if (temp.getExactColName(columnTitle[k]) == null) {
                     return "There isn't a column called " + columnTitle[k] + " in " + tableName;
@@ -219,7 +263,9 @@ public class Dealer {
         return anonTable.toString();
     }
 
-
+    // converts float column to String column
+    // if it has zero division error (represented as null in operateFloat or operateInt method),
+    // put Nal
     private static String[] convertFloatToString(Float[] array) {
         String[] result = new String[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -232,6 +278,9 @@ public class Dealer {
         return result;
     }
 
+    // converts int column to String column
+    // if it has zero division error (represented as null in operateFloat or operateInt method),
+    // put Nal
     private static String[] convertIntToString(Integer[] array) {
         String[] result = new String[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -244,6 +293,10 @@ public class Dealer {
         return result;
     }
 
+    // takes in float and int input.
+    // changes the operatino oder depending on flag (e.g. flag = true -> a operator b)
+    // according to the given operator, return the computed result as float number
+    // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Float operateFloatInt(Float a, Integer b, String operator, boolean flag) {
         if (operator.equals("+")) {
                 return a + b;
@@ -268,6 +321,9 @@ public class Dealer {
         }
     }
 
+    // takes in int and int input.
+    // accoding to the given operator, return the computed result as int number
+    // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Integer operateInt(Integer a, Integer b, String operator) {
         if (operator.equals("+")) {
             return a + b;
@@ -283,6 +339,9 @@ public class Dealer {
         }
     }
 
+    // takes in float and float input.
+    // accoding to the given operator, return the computed result as float number
+    // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Float operateFloat(Float a, Float b, String operator) {
         if (operator.equals("+")) {
             return a + b;
@@ -298,6 +357,8 @@ public class Dealer {
         }
     }
 
+    // converts String column to int column
+    // if it has NOVALUE, changes it to 0
     private static Integer[] convertInt(List<String> p) {
         Integer[] array = new Integer[p.size()];
         for (int i = 0; i < p.size(); i++) {
@@ -310,6 +371,8 @@ public class Dealer {
         return array;
     }
 
+    // converts String column to float column
+    // if it has NOVALUE, changes it to 0.0f
     private static Float[] convertFloat(List<String> p) {
         Float[] array = new Float[p.size()];
         for (int i = 0; i < p.size(); i++) {
@@ -322,6 +385,7 @@ public class Dealer {
         return array;
     }
 
+    // checks if the given String array has empty space
     private static boolean containsSpace(String[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].equals(" ")) {
@@ -331,6 +395,8 @@ public class Dealer {
         return false;
     }
 
+    // check if the string has any operator
+    // handles both cases where "x + y" and "x+y"
     private static String[] containOperator(String str) {
         String[] array;
         if (!containsSpace(str.split(""))) {
@@ -346,36 +412,50 @@ public class Dealer {
         return null;
     }
 
+    // joins two tables
     private static Table joinSelect(String[] columnTitle, String[] tableName, String condition) {
         Table tempTableP =  Database.getTable(tableName[0]);
         Table tempTableQ = Database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
         String[] tempColNameQ = tempTableQ.getColumnName();
+        // creates temporary jointed column. Duplicated one will be droped
         String[] newColTitle = combine(tempColNameP, tempColNameQ);
+
+        // creates a new table
+        // This will be the result
         Table joited = new Table("joinedTable", newColTitle);
+
         LinkedList<String> pRowContents;
         LinkedList<String> qRowContents;
+        // adds all possible rows
+        // if there are invalid rows, doesn't add it (e.g. jointed table has two x column, but dont't have common values)
         for (int pRow = 0; pRow < tempTableP.getNumRow(); pRow++) {
             pRowContents = tempTableP.getRow(pRow);
             for (int qRow = 0; qRow < tempTableQ.getNumRow(); qRow++) {
                 qRowContents = tempTableQ.getRow(qRow);
+                // check its validity
                 if (check(tempTableP, pRowContents, tempTableQ, qRowContents)) {
                     joited.addRowLast(catenate(pRowContents, qRowContents));
                 }
             }
         }
+        // drops duplicated column
         for (int i = 0; i < joited.getNumCol(); i++) {
-            for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++){
+            for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++) {
                 if (joited.getColumnName()[i].equals(joited.getColumnName()[indexToBeDeleted])) {
                     joited.removeColmnTitle(indexToBeDeleted);
                     joited.removeColumn(indexToBeDeleted);
                 }
             }
         }
+        // saves it as "jointedTable" in db just in case where it will be call somewhere
         Database.saveTable(joited);
+
         return joited;
     }
 
+    // combines two columns to single one
+    // allows duplicated names
     private static String[] combine(String[] p, String[] q) {
         String[] result = new String[p.length + q.length];
         for (int i = 0; i < p.length; i++) {
@@ -387,6 +467,8 @@ public class Dealer {
         return result;
     }
 
+    // connects two LinkedList and returns its result
+    // not destructive
     private static LinkedList<String> catenate(LinkedList<String> p, LinkedList<String> q) {
         LinkedList<String> result = new LinkedList();
         for (int i = 0; i < p.size(); i++) {

@@ -1,4 +1,4 @@
-package Things;
+package things;
 import java.util.*;
 
 

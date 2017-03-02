@@ -1,4 +1,4 @@
-package Things;
+package things;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -180,8 +180,8 @@ public class Parse {
         // うえのStringJoiner joiner から "You are tring..." まで全部適当。動くように適当に
         // 与えられてるだけ。以下からメインのコード
 
-        // Things.Dealer に飛ばす
-        //String result = Things.Dealer.dealCreateTable(name, cols);
+        // things.Dealer に飛ばす
+        //String result = things.Dealer.dealCreateTable(name, cols);
 
         return name;
 

@@ -1,4 +1,4 @@
-package Things;
+package things;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
