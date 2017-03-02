@@ -47,17 +47,18 @@ public class Table<T> {
     }
 
     public String getExactColName(String colName) {
+        String[] array = getColumnName();
         for (int i = 0; i < this.zeroRow.size(); i++) {
-            if (this.zeroRow.get(i).split("\\*s \\*s")[0].equals(colName)) {
+            if (array[i].split(" ")[0].equals(colName)) {
                 return this.zeroRow.get(i);
             }
         }
-        System.out.print("no such column");
+ /*       System.out.println("no such column"); */
         return null;
     }
 
     public boolean checkType(String colName, String type) {
-        if (getExactColName(colName).split("\\*s \\*s")[1].equals(type)) {
+        if (getExactColName(colName).split(" ")[1].equals(type)) {
             return true;
         }
         return false;

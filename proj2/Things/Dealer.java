@@ -137,21 +137,32 @@ public class Dealer {
         if (columnTitle[0].equals("*")) {
             return temp.toString();
         }
-        Table anonTable = new Table("anon", columnTitle);
+        String[] exactColTitle = new String[columnTitle.length];
+        for (int j = 0; j < columnTitle.length; j++) {
+            String name = temp.getExactColName(columnTitle[j]);
+            if (newColTitle != null) {
+                exactColTitle[j] = newColTitle;
+            } else if (name == null) {
+                exactColTitle[j] = columnTitle[j];
+            } else {
+                exactColTitle[j] = name;
+            }
+        }
+        Table anonTable = new Table("anon", exactColTitle);
         for (int k = 0; k < columnTitle.length; k++) {
             LinkedList[] newColumn = new LinkedList[columnTitle.length];
             String[] array = containOperator(columnTitle[k]); // e.g. array = ["x", "+", "y"]
-            if (temp.getExactColName(array[0]) == null) {
-                    return "There isn't a column called " + array[0] + " in " + tableName;
-            }
-            if (temp.getExactColName(array[2]) == null) {
-                return "There isn't a column called " + array[2] + " in " + tableName;
-            }
             Integer[] convertedInt = new Integer[temp.getNumRow()];
             Float[] convertedFloat = new Float[temp.getNumRow()];
             boolean flagFirst = false;
             boolean flagSecond = false;
-            if (!(array.equals(null))) {
+            if (array !=  null) {
+                if (temp.getExactColName(array[0]) == null) {
+                    return "There isn't a column called " + array[0] + " in " + tableName;
+                }
+                if (temp.getExactColName(array[2]) == null) {
+                    return "There isn't a column called " + array[2] + " in " + tableName;
+                }
                 if (temp.checkType(array[0], "int")) {
                     convertedInt = convertInt(temp.getColumn(array[0]));
                     flagFirst = true;
@@ -212,7 +223,7 @@ public class Dealer {
     private static String[] convertFloatToString(Float[] array) {
         String[] result = new String[array.length];
         for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(null)) {
+            if (array[i] == null) {
                 result[i] = "NaN";
             } else {
                 result[i] = Float.toString(array[i]);
@@ -224,7 +235,7 @@ public class Dealer {
     private static String[] convertIntToString(Integer[] array) {
         String[] result = new String[array.length];
         for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(null)) {
+            if (array[i] == null) {
                 result[i] = "NaN";
             } else {
                 result[i] = Integer.toString(array[i]);
@@ -290,7 +301,11 @@ public class Dealer {
     private static Integer[] convertInt(List<String> p) {
         Integer[] array = new Integer[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            array[i] = Integer.parseInt((p.get(i)));
+            if (p.get(i) == "NOVALUE") {
+                array[i] = 0;
+            } else {
+                array[i] = Integer.parseInt((p.get(i)));
+            }
         }
         return array;
     }
@@ -298,14 +313,18 @@ public class Dealer {
     private static Float[] convertFloat(List<String> p) {
         Float[] array = new Float[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            array[i] = Float.parseFloat(p.get(i));
+            if (p.get(i) == "NOVALUE") {
+                array[i] = 0.0f;
+            } else {
+                array[i] = Float.parseFloat(p.get(i));
+            }
         }
         return array;
     }
 
-    private static boolean contains(String[] array, String str) {
+    private static boolean containsSpace(String[] array) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i].split("\\s* \\s*")[0].equals(str)) {
+            if (array[i].equals(" ")) {
                 return true;
             }
         }
@@ -314,10 +333,10 @@ public class Dealer {
 
     private static String[] containOperator(String str) {
         String[] array;
-        if (str.length() == 1) {
-            array = str.split("\\s*\\s*");
+        if (!containsSpace(str.split(""))) {
+            array = str.split("");
         } else {
-            array = str.split("\\s* \\s*");
+            array = str.split(" ");
         }
         for (int i = 0; i < array.length; i++) {
             if (array[i].equals("+") || array[i].equals("-") || array[i].equals("*") || array[i].equals("/")) {

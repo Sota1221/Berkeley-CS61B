@@ -111,6 +111,7 @@ public class Parse {
             String newTableName = m.group(1); // T2
             String[] columnTitle;
             String newColTitle;
+            System.out.println(m.group(2));
             if (m.group(2).contains("as")) {
                 String[] temp = m.group(2).split("\\s* as \\s*");
                 columnTitle = temp[0].split("\\s*,\\s*");
