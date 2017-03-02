@@ -1,9 +1,9 @@
 package Things;
 
-import com.sun.scenario.effect.impl.state.LinearConvolveKernel;
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
+/*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
+/*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
 import db.Database;
-import sun.awt.image.ImageWatched;
+/*import sun.awt.image.ImageWatched;*/
 
 import java.util.ArrayList;
 import java.util.LinkedList;
