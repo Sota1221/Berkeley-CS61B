@@ -13,6 +13,7 @@ import java.util.List;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 /* import java.util.StringJoiner; */
@@ -33,22 +34,34 @@ public class Dealer {
 
     public static String dealStore(String tableName) {
         Table t = Database.getTable(tableName);
-        // make a file for the table somehow.
-        return "dealStore!!, Table t = " + tableName;
+
+        try{
+            File file0 = new File(tableName + ".tbl");
+            if (!file0.exists()) {
+                file0.createNewFile();
+            }
+            FileWriter filewriter;
+            if (checkBeforeWritefile(file0)) {
+                filewriter = new FileWriter(file0);
+                filewriter.write(t.toString());
+                filewriter.close();
+            } else {
+                System.out.println("cannot write");
+            }
+        }catch(IOException e){
+            System.out.println(e);
+        }
+        return "";
     }
 
     public static String dealLoad(String fileName) {
         try {
-            File file;
-            File tempFile0 = new File(fileName + ".tbl");
-            File tempFile1 = new File("examples/" + fileName + ".tbl");
+
+            File file = new File(fileName + ".tbl");
+          /*  File tempFile1 = new File("examples/" + fileName + ".tbl"); */
             //checks if file exists in the current directory or examples
-            if (!(checkBeforeReadfile(tempFile0) || checkBeforeReadfile(tempFile1))) {
+            if (!(checkBeforeReadfile(file))) {
                 return "ERROR: .*"; //couldn't open or find the file.
-            } else if (checkBeforeReadfile(tempFile0)) {
-                file = tempFile0;
-            } else {
-                file = tempFile1;
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
             // creates column titles by reading the first line
@@ -76,6 +89,13 @@ public class Dealer {
             if (file.isFile() && file.canRead()) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private static boolean checkBeforeWritefile(File file) {
+        if (file.isFile() && file.canWrite()) {
+            return true;
         }
         return false;
     }
