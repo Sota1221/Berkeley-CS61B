@@ -1,39 +1,45 @@
 package db;
-import things.Parse;
-import things.Table;
+import db.things.Table;
 
 import java.util.Map;
 import java.util.HashMap;
 
 public class Database {
-    public static Map<String, Table> database  = new HashMap<String, Table>();
+    private Map<String, Table> database  = new HashMap<String, Table>();
 
     // no constructor because fuck you that's why
 
-    public static String transact(String query) {
-        return Parse.eval(query);
+    public String transact(String query) {
+        return db.things.Parse.eval(query, this);
     }
 
-    public static void saveTable(Table t) {
-        database.put(t.getName(), t);
+    public String saveTable(Table t) {
+        if (hasTable(t.getName())) {
+            return ""; // "ERROR: Table called " + t.getName() + " already exist";
+        } else {
+            database.put(t.getName(), t);
+            return "";
+        }
     }
 
-    public static boolean hasTable(String tableName){
-        return Database.database.containsKey(tableName);
+    public boolean hasTable(String tableName) {
+        return database.containsKey(tableName);
     }
 
-    public static Table getTable(String tableName) {
-        return database.get(tableName);
+    public Table getTable(String tableName) {
+        if (hasTable(tableName)) {
+            return database.get(tableName);
+        }
+        return null;
     }
 
-    public static void removeTable(String tableName) {
-        database.remove(tableName);
+    public String removeTable(String tableName) {
+        if (!(hasTable(tableName))) {
+            return "ERROR: Table called " + tableName + " does not exist.";
+        } else {
+            database.remove(tableName);
+            return "";
+        }
     }
 
-
-
-
-//    public void add(Table table) {
-//        temp.add(table);
-//    }
 }
