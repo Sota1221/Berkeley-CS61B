@@ -1,7 +1,6 @@
 package lab8;
 
 import java.util.Iterator;
-import java.util.PrimitiveIterator;
 import java.util.Set;
 
 
@@ -12,10 +11,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private class Node {
         private K key;
         private V value;
-        private Node left,right;
+        private Node left, right;
         private int N;
 
-        public Node(K key, V value, int N) {
+        Node(K key, V value, int N) {
             this.key = key;
             this.value = value;
             this.N = N;
@@ -30,14 +29,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             print(x.right);
         }
 
-        private boolean hasKey(Node x, K key) {
+        private boolean hasKey(Node x, K givenkey) {
             if (x == null || x.key == null) {
                 return false;
             }
-            if (x.key.equals(key)) {
+            if (x.key.equals(givenkey)) {
                 return true;
             }
-            return hasKey(x.left, key) || hasKey(x.right, key);
+            return hasKey(x.left, givenkey) || hasKey(x.right, givenkey);
         }
     }
 
@@ -138,6 +137,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     @Override
-    public Iterator<K> iterator() { throw new UnsupportedOperationException("in iterator()"); }
+    public Iterator<K> iterator() {
+        throw new UnsupportedOperationException("in iterator()");
+    }
 
 }
