@@ -86,7 +86,6 @@ public class Percolation {
             set2.union(current, this.size * this.size);
             if (this.size < 2) {
                 set1.union(current, this.size * this.size + 1);
-                set2.union(current, this.size * this.size + 1);
                 return;
             }
             indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row + 1, col)};
