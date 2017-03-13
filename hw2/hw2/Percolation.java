@@ -36,7 +36,6 @@ public class Percolation {
         }
         this.grid[row][col] = true;
         this.numOpen++;
-
         int current = toSetIndex(row, col);
         int[] indicesToBeChecked;
         if (col == 0) {
@@ -53,7 +52,7 @@ public class Percolation {
                 // unions for |__   shape (type 2)
                 set.union(current, this.size * this.size + 1);
                 if (this.size < 2) {
-                    set.union(current, this.size * this.size + 1);
+                    set.union(current, this.size * this.size);
                     return;
                 }
                 indicesToBeChecked = new int[]{toSetIndex(row - 1, col), toSetIndex(row, col + 1)};
@@ -77,7 +76,7 @@ public class Percolation {
                 // unions for __| shape (type 5)
                 set.union(toSetIndex(row, col), this.size * this.size + 1);
                 if (this.size < 2) {
-                    set.union(current, this.size * this.size + 1);
+                    set.union(current, this.size * this.size);
                     return;
                 }
                 indicesToBeChecked = new int[]{toSetIndex(row - 1, col), toSetIndex(row, col - 1)};
