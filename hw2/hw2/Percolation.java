@@ -28,7 +28,7 @@ public class Percolation {
     // open the site (row, col) if it is not open already
     // throw java.lang.IndexOutOfBoundsException if you need
     public void open(int row, int col) {
-        if ((row < 0 || this.size - 1 < row) || (col < 0 || this.size - 1 < col)) {
+        if (row < 0 || this.size - 1 < row || col < 0 || this.size - 1 < col) {
             throw new IndexOutOfBoundsException("ERROR: invalid index");
         }
         if (grid[row][col]) {
@@ -43,27 +43,43 @@ public class Percolation {
             if (row == 0) {
                 //  unions for    __ shape (type 1)
                 //               |
-                set.union(toSetIndex(row, col), this.size * this.size);
+                set.union(current, this.size * this.size);
+                if (this.size < 2) {
+                    set.union(current, this.size * this.size + 1);
+                    return;
+                }
                 indicesToBeChecked = new int[]{toSetIndex(row + 1, col), toSetIndex(row, col + 1)};
             } else if (row == this.size - 1) {
                 // unions for |__   shape (type 2)
-                set.union(toSetIndex(row, col), this.size * this.size + 1);
+                set.union(current, this.size * this.size + 1);
+                if (this.size < 2) {
+                    set.union(current, this.size * this.size + 1);
+                    return;
+                }
                 indicesToBeChecked = new int[]{toSetIndex(row - 1, col), toSetIndex(row, col + 1)};
             } else {
                 // unions for |__ shape (type 3)
                 //            |
                 indicesToBeChecked = new int[]{toSetIndex(row - 1, col), toSetIndex(row, col + 1),
-                        toSetIndex(row + 1, col)};
+                            toSetIndex(row + 1, col)};
             }
         } else if (col == this.size - 1) {
             if (row == 0) {
                 // unions for __  shape (type 4)
                 //              |
                 set.union(toSetIndex(row, col), this.size * this.size);
+                if (this.size < 2) {
+                    set.union(current, this.size * this.size + 1);
+                    return;
+                }
                 indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row + 1, col)};
             } else if (row == this.size - 1) {
                 // unions for __| shape (type 5)
                 set.union(toSetIndex(row, col), this.size * this.size + 1);
+                if (this.size < 2) {
+                    set.union(current, this.size * this.size + 1);
+                    return;
+                }
                 indicesToBeChecked = new int[]{toSetIndex(row - 1, col), toSetIndex(row, col - 1)};
             } else {
                 // unions for __| shape (type 6)
@@ -124,7 +140,7 @@ public class Percolation {
     // is the site (row, col) open?
     // throw java.lang.IndexOutOfBoundsException if you need
     public boolean isOpen(int row, int col) {
-        if ((row < 0 || this.size - 1 < row) || (col < 0 || this.size - 1 < col)) {
+        if (row < 0 || this.size - 1 < row || col < 0 || this.size - 1 < col) {
             throw new IndexOutOfBoundsException("ERROR: invalid index");
         }
         return this.grid[row][col];
@@ -134,7 +150,7 @@ public class Percolation {
     // is the site (row, col) full?
     // throw java.lang.IndexOutOfBoundsException if you need
     public boolean isFull(int row, int col) {
-        if ((row < 0 || this.size - 1 < row) || (col < 0 || this.size - 1 < col)) {
+        if (row < 0 || this.size - 1 < row || col < 0 || this.size - 1 < col) {
             throw new IndexOutOfBoundsException("ERROR: invalid index");
         }
         return set.connected(this.size * this.size, toSetIndex(row, col));
