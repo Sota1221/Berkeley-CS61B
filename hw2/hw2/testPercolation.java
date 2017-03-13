@@ -39,6 +39,12 @@ public class testPercolation {
                 assertTrue(test2.isFull(i, k));
             }
         }
+
+        Percolation test3 = new Percolation(10);
+        for (int j = 0; j < 10; j++) {
+            test3.open(j, 5);
+        }
+        assertTrue(test3.percolates());
     }
 
 

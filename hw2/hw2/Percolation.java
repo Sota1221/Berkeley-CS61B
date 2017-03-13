@@ -2,7 +2,6 @@ package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-import java.util.LinkedList;
 
 public class Percolation {
 
@@ -11,7 +10,6 @@ public class Percolation {
     private WeightedQuickUnionUF set1;
     private WeightedQuickUnionUF set2;
     private int numOpen;
-    private boolean percolationFlag;
 
     // create N-by-N grid, with all sites initially blocked.
     // O(N^2)
@@ -36,7 +34,7 @@ public class Percolation {
         if (row < 0 || this.size - 1 < row || col < 0 || this.size - 1 < col) {
             throw new IndexOutOfBoundsException("ERROR: invalid index");
         }
-        if (grid[row][col]) {
+        if (this.grid[row][col]) {
             return;
         }
         this.grid[row][col] = true;
@@ -57,14 +55,13 @@ public class Percolation {
         if (row == 0) {
             // unions for  ___ shape (type 7)
             //              |
-            set1.union(current, this.size * this.size);
+            this.set1.union(current, this.size * this.size);
             set2.union(current, this.size * this.size);
             indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row, col + 1),
                     toSetIndex(row + 1, col)};
         } else if (row == this.size - 1) {
             // unions for _|_ shape (type 8)
-            int last = this.size + this.size + 1;
-            set1.union(current, last);
+            this.set1.union(current, this.size * this.size + 1);
             indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row - 1, col),
                     toSetIndex(row, col + 1)};
         } else {
@@ -76,13 +73,12 @@ public class Percolation {
         unionSpecifiedSties(indicesToBeChecked, current);
     }
 
-
     private void openHelper2(int current, int row, int col) {
         int[] indicesToBeChecked;
         if (row == 0) {
             // unions for __  shape (type 4)
             //              |
-            set1.union(current, this.size * this.size);
+            this.set1.union(current, this.size * this.size);
             set2.union(current, this.size * this.size);
             if (this.size < 2) {
                 set1.union(current, this.size * this.size + 1);
@@ -91,9 +87,9 @@ public class Percolation {
             indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row + 1, col)};
         } else if (row == this.size - 1) {
             // unions for __| shape (type 5)
-            set1.union(current, this.size * this.size + 1);
+            this.set1.union(this.size * this.size + 1, current);
             if (this.size < 2) {
-                set1.union(current, this.size * this.size);
+                this.set1.union(current, this.size * this.size);
                 set2.union(current, this.size * this.size);
                 return;
             }
@@ -113,18 +109,18 @@ public class Percolation {
         if (row == 0) {
             //  unions for    __ shape (type 1)
             //               |
-            set1.union(current, this.size * this.size);
+            this.set1.union(current, this.size * this.size);
             set2.union(current, this.size * this.size);
             if (this.size < 2) {
-                set1.union(current, this.size * this.size + 1);
+                this.set1.union(current, this.size * this.size + 1);
                 return;
             }
             indicesToBeChecked = new int[]{toSetIndex(row + 1, col), toSetIndex(row, col + 1)};
         } else if (row == this.size - 1) {
             // unions for |__   shape (type 2)
-            set1.union(current, this.size * this.size + 1);
+            this.set1.union(current, this.size * this.size + 1);
             if (this.size < 2) {
-                set1.union(current, this.size * this.size);
+                this.set1.union(current, this.size * this.size);
                 set2.union(current, this.size * this.size);
                 return;
             }
@@ -142,7 +138,7 @@ public class Percolation {
     private void unionSpecifiedSties(int[] indices, int current) {
         for (int i = 0; i < indices.length; i++) {
             if (isOpen(indices[i])) {
-                set1.union(indices[i], current);
+                this.set1.union(indices[i], current);
                 set2.union(indices[i], current);
             }
         }
@@ -183,7 +179,7 @@ public class Percolation {
         if (row < 0 || this.size - 1 < row || col < 0 || this.size - 1 < col) {
             throw new IndexOutOfBoundsException("ERROR: invalid index");
         }
-        return set2.connected(this.size * this.size, toSetIndex(row, col));
+        return this.set2.connected(this.size * this.size, toSetIndex(row, col));
     }
 
 
@@ -196,8 +192,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        int a = this.size * this.size;
-        return set1.connected(a, a + 1);
+        return this.set1.connected(this.size * this.size,  this.size * this.size + 1);
     }
 
 
