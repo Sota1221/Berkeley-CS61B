@@ -5,8 +5,9 @@ import edu.princeton.cs.algs4.StdStats;
 
 
 public class PercolationStats {
-    private int[] records;
+    private double[] records;
     private int T;
+
 
     // perform T independent experiments on an N-by-N grid
     // throw a java.lang.IllegalArgumentException if either N ≤ 0 or T ≤ 0.
@@ -15,7 +16,7 @@ public class PercolationStats {
             throw new IllegalArgumentException("invalid input");
         }
         this.T = T;
-        this.records = new int[this.T];
+        this.records = new double[this.T];
         for (int i = 0; i < this.T; i++) {
             Percolation test = new Percolation(N);
             while (!test.percolates()) {
@@ -23,7 +24,7 @@ public class PercolationStats {
                 int col = StdRandom.uniform(0, N);
                 test.open(row, col);
             }
-            this.records[i] = test.numberOfOpenSites();
+            this.records[i] = (double) test.numberOfOpenSites() / (N * N);
         }
     }
 
