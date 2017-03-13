@@ -20,7 +20,7 @@ public class Percolation {
         this.grid = new boolean[N][N];
         // set(N*N) is a checker above the grid. Calls it topChecker
         // set(N*N+1) is a checker blow the grid Calls it bottomChecker
-        this.set = new WeightedQuickUnionUF(N * N + 2);
+        this.set = new WeightedQuickUnionUF(N * N + N + 1);
         this.numOpen = 0;
     }
 
@@ -74,7 +74,7 @@ public class Percolation {
                 indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row + 1, col)};
             } else if (row == this.size - 1) {
                 // unions for __| shape (type 5)
-                set.union(toSetIndex(row, col), this.size * this.size + 1);
+                set.union(toSetIndex(row, col), this.size * this.size + this.size);
                 if (this.size < 2) {
                     set.union(current, this.size * this.size);
                     return;
@@ -95,7 +95,7 @@ public class Percolation {
                                                toSetIndex(row + 1, col)};
             } else if (row == this.size - 1) {
                 // unions for _|_ shape (type 8)
-                set.union(toSetIndex(row, col), this.size * this.size + 1);
+                set.union(toSetIndex(row, col), toSetIndex(row, col) + this.size + 1);
                 indicesToBeChecked = new int[]{toSetIndex(row, col - 1), toSetIndex(row - 1, col),
                                                toSetIndex(row, col + 1)};
             } else {
@@ -165,7 +165,13 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return set.connected(this.size * this.size, this.size * this.size + 1);
+        int start = this.size * this.size;
+        for (int i = 1; i < this.size + 1; i++) {
+            if (set.connected(start, start + i)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
