@@ -1,15 +1,14 @@
 package hw3.puzzle;
 
-import hw3.puzzle.SearchNode;
-import hw3.puzzle.WorldState;
 import edu.princeton.cs.algs4.MinPQ;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
+
 
 
 public class Solver {
-SearchNode current;
+
+    SearchNode current;
 
     /*Constructor which solves the puzzle, computing
     everything necessary for moves() and solution() to
@@ -31,7 +30,7 @@ SearchNode current;
 
     /*Returns the minimum number of moves to solve the puzzle starting
     at the initial WorldState. */
-    public int moves(){
+    public int moves() {
         return current.numOfMove;
     }
 
