@@ -6,8 +6,8 @@ public class AlphabetEasyPuzzleSolver {
      * Test routine for your Solver class. Uncomment and run to test
      * your basic functionality.
      **********************************************************************/
-    /*public static void main(String[] args) {
-        char start = 'w';
+    public static void main(String[] args) {
+        char start = 'h';
 
         AlphabetEasyPuzzle startState = new AlphabetEasyPuzzle(start);
         Solver solver = new Solver(startState);
@@ -16,5 +16,5 @@ public class AlphabetEasyPuzzleSolver {
         for (WorldState ws : solver.solution()) {
             StdOut.println(ws);
         }
-    }*/
+    }
 }
