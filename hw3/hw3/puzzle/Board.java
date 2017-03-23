@@ -11,7 +11,12 @@ public class Board implements WorldState {
     //tiles[i][j] = tile at row i, column j
     public Board(int[][] tiles) {
         size = tiles.length;
-        board = tiles;
+        board = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                board[i][j] = tiles[i][j];
+            }
+        }
     }
 
     //Returns value of tile at row i, column j (or 0 if blank)
@@ -87,7 +92,7 @@ public class Board implements WorldState {
             for (int j = 0; j < size; j++) {
                 if (board[i][j] != 0) {
                     int row = (board[i][j] - 1) / size;
-                    int col = board[i][j] % size - 1;
+                    int col = (board[i][j] - 1) % size;
                     total += Math.abs(i - row) + Math.abs(j - col);
                 }
             }
