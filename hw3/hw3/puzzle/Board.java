@@ -70,6 +70,8 @@ public class Board implements WorldState {
         return neighbors;
     }
 
+
+
     //Hamming estimate described below
     public int hamming() {
         int total = 0;
@@ -112,16 +114,26 @@ public class Board implements WorldState {
         return hamming() == 0;
     }
 
+    public int hashCode() {
+        return ((Object) this).hashCode();
+    }
+
     //Returns true if this board's tile values are the same
     //position as y's
     public boolean equals(Object y) {
-        if (this.getClass() != y.getClass()) {
+        if (this == y) {
+            return true;
+        }
+        if (y == null || this.getClass() != y.getClass()) {
             return false;
         }
         Board board2 = (Board) y;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (board[i][j] != board2.board[i][j]) {
+        if (size() != board2.size()) {
+            return false;
+        }
+        for (int i = 0; i < size(); i++) {
+            for (int j = 0; j < size(); j++) {
+                if (tileAt(i, j) != board2.tileAt(i, j)) {
                     return false;
                 }
             }
