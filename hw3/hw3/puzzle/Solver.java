@@ -2,6 +2,7 @@ package hw3.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 
@@ -20,6 +21,11 @@ public class Solver {
         mapHeap.insert(current);
         while (!current.currentWS.isGoal()) {
             for (WorldState neighbor: current.currentWS.neighbors()) {
+                if (current.previousSN != null) {
+                    if (neighbor.equals(current.previousSN.currentWS)) {
+                        continue;
+                    }
+                }
                 mapHeap.insert(new SearchNode(neighbor, current));
             }
             current = mapHeap.delMin();
