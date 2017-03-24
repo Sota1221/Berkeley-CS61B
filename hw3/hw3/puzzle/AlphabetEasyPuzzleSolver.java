@@ -7,7 +7,7 @@ public class AlphabetEasyPuzzleSolver {
      * your basic functionality.
      **********************************************************************/
     public static void main(String[] args) {
-        char start = 'h';
+        char start = 'w';
 
         AlphabetEasyPuzzle startState = new AlphabetEasyPuzzle(start);
         Solver solver = new Solver(startState);
