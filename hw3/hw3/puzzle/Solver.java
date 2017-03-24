@@ -16,7 +16,6 @@ public class Solver {
     public Solver(WorldState initial) {
         current = new SearchNode(initial, null);
         MinPQ<SearchNode> mapHeap = new MinPQ<>(current);
-        mapHeap.insert(current);
 
         while (!current.currentWS.isGoal()) {
             for (WorldState neighbor: current.currentWS.neighbors()) {
