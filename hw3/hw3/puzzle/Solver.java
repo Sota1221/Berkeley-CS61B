@@ -29,7 +29,6 @@ public class Solver {
             }
             current = mapHeap.delMin();
         }
-        path = path();
     }
 
 
@@ -56,6 +55,7 @@ public class Solver {
     /* Returns a sequence of WorldStates from the initial WorldState
                  to the solution.*/
     public Iterable<WorldState> solution() {
+        path = path();
         return path;
     }
 }
