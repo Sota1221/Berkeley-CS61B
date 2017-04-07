@@ -22,18 +22,18 @@ public class TestSimpleOomage {
 
     @Test
     public void testHashCodePerfect() {
-        /* Write a test that ensures the hashCode is perfect,
+        /* TODO: Write a test that ensures the hashCode is perfect,
           meaning no two SimpleOomages should EVER have the same
           hashCode!
          */
         for (int i = 0; i < 51; i = i + 5) {
-            SimpleOomage s1 = new SimpleOomage(i, i * 5, i + 5);
-            SimpleOomage s2 = new SimpleOomage(i, i + 5, i * 5);
+            SimpleOomage s1 = new SimpleOomage(i, i*5, i+5);
+            SimpleOomage s2 = new SimpleOomage(i, i+5, i*5);
             assertNotEquals(s1.hashCode(), s2.hashCode());
         }
         for (int i = 0; i < 51; i = i + 5) {
-            SimpleOomage s1 = new SimpleOomage(i, i + 5, i * 5);
-            SimpleOomage s2 = new SimpleOomage(i, i + 5, i * 5);
+            SimpleOomage s1 = new SimpleOomage(i, i+5, i*5);
+            SimpleOomage s2 = new SimpleOomage(i, i+5, i*5);
             assertEquals(s1.hashCode(), s2.hashCode());
         }
 

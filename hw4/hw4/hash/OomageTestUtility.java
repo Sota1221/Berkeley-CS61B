@@ -9,14 +9,14 @@ public class OomageTestUtility {
         for (int i = 0; i < M; i++) {
             buckets[i] = new LinkedList<>();
         }
-        int n = oomages.size();
+        int N = oomages.size();
         for (Oomage o : oomages) {
             int bucketNum = (o.hashCode() & 0x7FFFFFFF) % M;
             buckets[bucketNum].add(o);
         }
 
         for (int i = 0; i < M; i++) {
-            if (buckets[i].size() < n / 50 || buckets[i].size() > n / 2.5) {
+            if (buckets[i].size() < N / 50 || buckets[i].size() > N / 2.5) {
                 return false;
             }
         }
