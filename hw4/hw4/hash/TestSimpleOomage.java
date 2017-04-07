@@ -26,19 +26,18 @@ public class TestSimpleOomage {
           meaning no two SimpleOomages should EVER have the same
           hashCode!
          */
-
-        for (int k = 0; k < 51; k += 5) {
-            SimpleOomage s1 = new SimpleOomage(k, k * 5, k + 5);
-            SimpleOomage s2 = new SimpleOomage(k, k + 5, k * 5);
+        for (int i = 0; i < 51; i = i + 5) {
+            SimpleOomage s1 = new SimpleOomage(i, i * 5, i + 5);
+            SimpleOomage s2 = new SimpleOomage(i, i + 5, i * 5);
             assertNotEquals(s1.hashCode(), s2.hashCode());
         }
-        for (int i = 0; i < 51; i += 5) {
+        for (int i = 0; i < 51; i = i + 5) {
             SimpleOomage s1 = new SimpleOomage(i, i + 5, i * 5);
             SimpleOomage s2 = new SimpleOomage(i, i + 5, i * 5);
             assertEquals(s1.hashCode(), s2.hashCode());
         }
-    }
 
+    }
     @Test
     public void testEquals() {
         SimpleOomage ooA = new SimpleOomage(5, 10, 20);
@@ -59,7 +58,7 @@ public class TestSimpleOomage {
         assertTrue(hashSet.contains(ooA2));
     }
 
-    /* Once you've finished haveNiceHashCodeSpread,
+    /* TODO: Once you've finished haveNiceHashCodeSpread,
     in OomageTestUtility, uncomment this test. */
     @Test
     public void testRandomOomagesHashCodeSpread() {
