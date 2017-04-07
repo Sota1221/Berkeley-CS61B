@@ -39,7 +39,7 @@ public class TestComplexOomage {
     @Test
     public void testWithDeadlyParams() {
         List<Oomage> deadlyList = new ArrayList<>();
-        int N = 50;
+        int N =256;
 
         for (int i = 0; i < N; i += 1) {
             deadlyList.add(ComplexOomage.randomComplexOomage());
