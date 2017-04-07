@@ -1,9 +1,12 @@
 package hw4.hash;
 
 import org.junit.Test;
+
+import static hw4.hash.OomageTestUtility.haveNiceHashCodeSpread;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TestComplexOomage {
@@ -29,7 +32,7 @@ public class TestComplexOomage {
             oomages.add(ComplexOomage.randomComplexOomage());
         }
 
-        assertTrue(OomageTestUtility.haveNiceHashCodeSpread(oomages, 10));
+        assertTrue(haveNiceHashCodeSpread(oomages, 10));
     }
 
     /* Create a list of Complex Oomages called deadlyList
@@ -39,13 +42,15 @@ public class TestComplexOomage {
     @Test
     public void testWithDeadlyParams() {
         List<Oomage> deadlyList = new ArrayList<>();
-        int N = 256 * 256 * 256 * 256 + 1;
-
+        int N = 10;
+        List<Integer> params = new LinkedList<>();
         for (int i = 0; i < N; i += 1) {
-            deadlyList.add(ComplexOomage.randomComplexOomage());
+            params.add(255);
         }
-
-        assertTrue(OomageTestUtility.haveNiceHashCodeSpread(deadlyList, N));
+        for (int i = 0; i < N; i += 1) {
+            deadlyList.add(new ComplexOomage(params));
+        }
+        assertTrue(haveNiceHashCodeSpread(deadlyList, 10));
     }
 
     /** Calls tests for SimpleOomage. */
