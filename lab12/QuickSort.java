@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.Quick;
 
 public class QuickSort {
     /**
@@ -51,7 +50,7 @@ public class QuickSort {
         int len = unsorted.size();
         for (int i = 0; i < len; i++) {
             Item item = unsorted.dequeue();
-            if (item.compareTo(pivot) < -1) {
+            if (item.compareTo(pivot) < 0) {
                 less.enqueue(item);
             } else if (item.compareTo(pivot) == 0) {
                 equal.enqueue(item);
@@ -64,7 +63,9 @@ public class QuickSort {
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
-        if (items.size() == 1 || items.size() == 0) { return items; }
+        if (items.size() == 1 || items.size() == 0) {
+            return items;
+        }
         Item pivot = getRandomItem(items);
         Queue<Item> less = new Queue<>();
         Queue<Item> equal = new Queue<>();
@@ -74,32 +75,32 @@ public class QuickSort {
     }
 
     public static void main(String[] args) {
-        Queue<String> students = new Queue<>();
-        students.enqueue("Sota");
-        students.enqueue("Yuki");
-        students.enqueue("Daigo");
-        students.enqueue("Koichi");
-        students.enqueue("Harumi");
-        students.enqueue("Yoshikazu");
-        students.enqueue("Yukiko");
-        students.enqueue("Kazuko");
-        students.enqueue("Masaji");
+        Queue<Integer> students = new Queue<>();
+        students.enqueue(2);
+        students.enqueue(2);
+        students.enqueue(7);
+        students.enqueue(3);
+        students.enqueue(5);
+        students.enqueue(9);
+        students.enqueue(9);
+        students.enqueue(9);
+        students.enqueue(1);
         // print unsorted queue
-        for (String e: students) {
+        for (Integer e: students) {
             System.out.println(e);
         }
         // create deep copy
-        Queue<String> studentCopy  = new Queue<>();
-        for (String e: students) {
+        Queue<Integer> studentCopy  = new Queue<>();
+        for (Integer e: students) {
             studentCopy.enqueue(e);
         }
         System.out.println("");
         students = QuickSort.quickSort(students);
-        for (String e: students) {
+        for (Integer e: students) {
             System.out.println(e);
         }
         System.out.println("");
-        for (String e: studentCopy) {
+        for (Integer e: studentCopy) {
             System.out.println(e);
         }
     }
