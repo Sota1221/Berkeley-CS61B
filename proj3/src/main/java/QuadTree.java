@@ -17,7 +17,11 @@ public class QuadTree {
              double[] location) {
             this.val = val;
             this.depth = depth;
-            this.name = nameFragment + this.val + ".png";
+            if (val == 0) {
+                this.name = nameFragment + "root.png";
+            } else {
+                this.name = nameFragment + this.val + ".png";
+            }
             this.ULLAT = location[0];
             this.ULLON = location[1];
             this.LRLAT = location[2];

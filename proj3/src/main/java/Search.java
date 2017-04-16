@@ -25,6 +25,7 @@ public class Search {
     private boolean querySuccess;
     public static final int WIDTH_FOR_EACH_IMAGE =  256;
     public static final int DEPTH_OF_ROOT = 0;
+    public static final int MAX_HEIGHT = 7;
     private Map<String, Object> result;
 
     Search(QuadTree imageTree, Map<String, Double> target) {
@@ -68,7 +69,7 @@ public class Search {
             }
             return;
         }
-        if (lonDPP > targetLonDPP) {
+        if (lonDPP > targetLonDPP && depth < MAX_HEIGHT) {
             seekValidNode(current.getChild(1), depth + 1);
             seekValidNode(current.getChild(2), depth + 1);
             seekValidNode(current.getChild(3), depth + 1);
@@ -120,7 +121,7 @@ public class Search {
         rasterUlLon = ul.getULLON();
         rasterUlLat = ul.getULLAT();
         rasterLrLon = lr.getLRLON();
-        rasterLrLat = lr.getULLAT();
+        rasterLrLat = lr.getLRLAT();
         rasterDepth = ul.depth();
     }
 
@@ -150,7 +151,7 @@ public class Search {
         result.put("raster_ul_lat", rasterUlLat);
         result.put("raster_lr_lon", rasterLrLon);
         result.put("raster_lr_lat", rasterLrLat);
-        result.put("raster_depth", rasterDepth);
+        result.put("depth", rasterDepth);
         result.put("query_success", querySuccess);
     }
 
