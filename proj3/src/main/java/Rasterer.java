@@ -16,17 +16,19 @@ public class Rasterer {
     public static final int MAX_HEIGHT = 7;
     public static final int INITIAL_VALUE = 0;
     private QuadTree imageTree;
+    private String imgRoot;
 
     /** imgRoot is the name of the directory containing the images.
      *  You may not actually need this for your class. */
     public Rasterer(String imgRoot) {
         // construct QuadTree
+        this.imgRoot = imgRoot;
         double[] location = new double[4];
         location[0] = MapServer.ROOT_ULLAT;
         location[1] = MapServer.ROOT_ULLON;
         location[2] = MapServer.ROOT_LRLAT;
         location[3] = MapServer.ROOT_LRLON;
-        imageTree = new QuadTree(INITIAL_VALUE, MAX_HEIGHT, imgRoot, location);
+        imageTree = new QuadTree(INITIAL_VALUE, MAX_HEIGHT, location);
     }
 
     /**
@@ -65,7 +67,7 @@ public class Rasterer {
         // lrlon, ullon, w, h, ullat, lrlat
         // londitude = vertical line
         Map<String, Object> results = new HashMap<>();
-        Search sr = new Search(imageTree, params);
+        Search sr = new Search(imageTree, params, imgRoot);
         return sr.getValidMap();
     }
 

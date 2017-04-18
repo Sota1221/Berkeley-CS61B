@@ -13,15 +13,10 @@ public class QuadTree {
         private double LRLON;
 
 
-        Node(int val, int depth, String nameFragment,
+        Node(int val, int depth,
              double[] location) {
             this.val = val;
             this.depth = depth;
-            if (val == 0) {
-                this.name = nameFragment + "root.png";
-            } else {
-                this.name = nameFragment + this.val + ".png";
-            }
             this.ULLAT = location[0];
             this.ULLON = location[1];
             this.LRLAT = location[2];
@@ -60,10 +55,6 @@ public class QuadTree {
             return LRLON;
         }
 
-        public String getName() {
-            return name;
-        }
-
         public int depth() {
             return depth;
         }
@@ -76,14 +67,14 @@ public class QuadTree {
 
 
      */
-    public QuadTree(int initialValue, int maxHeight, String nameFragment, double[] location) {
-        root = new Node(initialValue, 0, nameFragment, location);
-        generateQuadTree(root, maxHeight, nameFragment, location);
+    public QuadTree(int initialValue, int maxHeight, double[] location) {
+        root = new Node(initialValue, 0, location);
+        generateQuadTree(root, maxHeight, location);
     }
 
     // creates 4 children unless currentNode's depth is equal to maxHeight
     public Node generateQuadTree(Node currentNode, int maxHeight,
-                                 String nameFragment, double[] location) {
+                                 double[] location) {
         if (currentNode.depth >= maxHeight) {
             return currentNode;
         }
@@ -93,20 +84,20 @@ public class QuadTree {
         double[] child4Location = setLocation(4, location);
         currentNode.child1 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 1,
-                        depth(currentNode) + 1, nameFragment, child1Location),
-                maxHeight, nameFragment, child1Location);
+                        depth(currentNode) + 1, child1Location),
+                maxHeight, child1Location);
         currentNode.child2 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 2,
-                        depth(currentNode) + 1, nameFragment, child2Location),
-                maxHeight, nameFragment, child2Location);
+                        depth(currentNode) + 1, child2Location),
+                maxHeight, child2Location);
         currentNode.child3 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 3,
-                        depth(currentNode) + 1, nameFragment, child3Location),
-                maxHeight, nameFragment, child3Location);
+                        depth(currentNode) + 1, child3Location),
+                maxHeight, child3Location);
         currentNode.child4 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 4,
-                        depth(currentNode) + 1, nameFragment, child4Location),
-                maxHeight, nameFragment, child4Location);
+                        depth(currentNode) + 1, child4Location),
+                maxHeight, child4Location);
         return currentNode;
     }
 

@@ -27,8 +27,10 @@ public class Search {
     public static final int DEPTH_OF_ROOT = 0;
     public static final int MAX_HEIGHT = 7;
     private Map<String, Object> result;
+    private String imgRoot;
 
-    Search(QuadTree imageTree, Map<String, Double> target) {
+    Search(QuadTree imageTree, Map<String, Double> target, String nameFragment) {
+        this.imgRoot = nameFragment;
         this.imageTree = imageTree;
         this.currentNode = imageTree.getRoot();
         this.target = target;
@@ -107,7 +109,8 @@ public class Search {
         for (Double key: sortedKeys) {
             LinkedList<QuadTree.Node> lst = classifiedNodes.get(key);
             for (int i = 0; i < lst.size(); i++) {
-                renderGrid[rowIndex][i] = ((QuadTree.Node) lst.get(i)).getName();
+                renderGrid[rowIndex][i] = imgRoot
+                        + ((QuadTree.Node) lst.get(i)).getVal() + ".png";
             }
             rowIndex++;
         }
