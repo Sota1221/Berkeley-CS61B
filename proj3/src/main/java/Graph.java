@@ -84,14 +84,6 @@ public class Graph {
         return actualNodes;
     }
 
-    public void clean() {
-        for (long n: adj.keySet()) {
-            if (adj.get(n).size() == 0) {
-                nodes.remove(n);
-                V--;
-            }
-        }
-    }
 
     public Iterable<Long> adj(Long v) {
         LinkedList<Long> lst = adj.get(v);

@@ -59,7 +59,7 @@ public class GraphDB {
      */
     private void clean() {
         // TO do:Your code here.
-        myGraph.clean();
+        return;
     }
 
     /** Returns an iterable of all vertex IDs in the graph. */
