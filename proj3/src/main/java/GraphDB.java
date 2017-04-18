@@ -1,3 +1,4 @@
+
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -5,7 +6,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
+//import java.io.InterruptedIOException;
+
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -25,6 +27,9 @@ public class GraphDB {
      * You do not need to modify this constructor, but you're welcome to do so.
      * @param dbPath Path to the XML file to be parsed.
      */
+
+    private Graph myGraph;
+
     public GraphDB(String dbPath) {
         try {
             File inputFile = new File(dbPath);
@@ -53,38 +58,100 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        // TO do:Your code here.
+        myGraph.clean();
     }
 
     /** Returns an iterable of all vertex IDs in the graph. */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return myGraph.vertices();
     }
 
+    //TO DO
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long v) {
-        return null;
+        return myGraph.adj(v);
     }
 
     /** Returns the Euclidean distance between vertices v and w, where Euclidean distance
      *  is defined as sqrt( (lonV - lonV)^2 + (latV - latV)^2 ). */
     double distance(long v, long w) {
-        return 0;
+        return myGraph.distance(v, w);
     }
 
     /** Returns the vertex id closest to the given longitude and latitude. */
     long closest(double lon, double lat) {
-        return 0;
+        return myGraph.closest(lon, lat);
     }
 
     /** Longitude of vertex v. */
     double lon(long v) {
-        return 0;
+        return myGraph.getNodeLon(v);
     }
 
     /** Latitude of vertex v. */
     double lat(long v) {
-        return 0;
+        return myGraph.getNodeLat(v);
+    }
+
+    public void createGraph() {
+        myGraph = new Graph(this);
+    }
+
+    public void  addNode(Graph.Node n) {
+        myGraph.addNode(n);
+    }
+
+    public void addEdge(Graph.Edge e) {
+        myGraph.addEdge(e);
+    }
+
+    public void updateLastNode(Graph.Node n) {
+        myGraph.updateLastNode(n);
+    }
+
+    public void updateLastEdge(Graph.Edge e) {
+        myGraph.updateLastEdge(e);
+    }
+
+    public Graph.Node getLastNode() {
+        return myGraph.getLastNode();
+    }
+
+    public Graph.Edge getLastEdge() {
+        return myGraph.getLastEdge();
+    }
+
+    public void addNodeToLastEdge(String nodeId) {
+        myGraph.addNodeToLastEdge(nodeId);
+    }
+
+    public void validateLastWay() {
+        myGraph.validateLastWay();
+    }
+
+    public void addLocationToLastNode(String location) {
+        myGraph.addLocationToLastNode(location);
+    }
+
+    public void connectAllGraph() {
+        myGraph.connectAll();
+    }
+
+    public void connectLastWay() {
+        myGraph.connectLastWay();
+    }
+
+    public void setMaxSpeed(String s) {
+        myGraph.setMaxSpeed(s);
+    }
+
+    public boolean isLastValid() {
+        return myGraph.isLastValid();
+    }
+
+    public void setLastWayName(String s) {
+        myGraph.setLastWayName(s);
     }
 }
