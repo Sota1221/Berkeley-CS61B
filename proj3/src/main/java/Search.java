@@ -63,7 +63,6 @@ public class Search {
         double ullon = current.getULLON();
         double lrlat = current.getLRLAT();
         double lrlon = current.getLRLON();
-        double lonDPP = (lrlon - ullon) / WIDTH_FOR_EACH_IMAGE;
         if (lrlat > targetULLAT || targetLRLON < ullon
                 || lrlon < targetULLON || targetLRLAT > ullat) {
             if (depth == DEPTH_OF_ROOT) {
@@ -71,6 +70,7 @@ public class Search {
             }
             return;
         }
+        double lonDPP = (lrlon - ullon) / WIDTH_FOR_EACH_IMAGE;
         if (lonDPP > targetLonDPP && depth < MAX_HEIGHT) {
             seekValidNode(current.getChild(1), depth + 1);
             seekValidNode(current.getChild(2), depth + 1);
@@ -81,7 +81,7 @@ public class Search {
         if (!classifiedNodes.containsKey(current.getULLAT())) {
             LinkedList<QuadTree.Node> lst = new LinkedList<>();
             lst.add(current);
-            putToSortedKeys(current.getULLAT());
+            sortedKeys.addLast(current.getULLAT());
             classifiedNodes.put(current.getULLAT(), lst);
             numOfPics++;
         } else {
@@ -90,7 +90,7 @@ public class Search {
         }
     }
 
-    public void putToSortedKeys(Double key) {
+/*    public void putToSortedKeys(Double key) {
         if (sortedKeys.isEmpty()) {
             sortedKeys.add(key);
             return;
@@ -102,7 +102,7 @@ public class Search {
             }
         }
         sortedKeys.addLast(key);
-    }
+    } */
 
     public void setValidPics() {
         int rowIndex = 0;

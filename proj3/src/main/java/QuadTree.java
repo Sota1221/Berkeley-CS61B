@@ -6,7 +6,6 @@ public class QuadTree {
         private int val;
         private Node child1, child2, child3, child4;
         private int depth;
-        private String name;
         private double ULLAT;
         private double ULLON;
         private double LRLAT;
@@ -137,16 +136,9 @@ public class QuadTree {
         return root;
     }
 
-    public int getVal() {
-        return root.val;
-    }
 
     public int getVal(Node x) {
         return x.val;
-    }
-
-    public int depth() {
-        return depth(root);
     }
 
     public int depth(Node x) {
@@ -154,17 +146,6 @@ public class QuadTree {
             return 0;
         }
         return x.depth;
-    }
-
-    public String name(Node x) {
-        return x.name;
-    }
-
-    public boolean isLeaf(Node x) {
-        if (x.child1 == null) {
-            return true;
-        }
-        return false;
     }
 
 
