@@ -3,8 +3,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class Search {
-    private QuadTree imageTree;
-    private QuadTree.Node currentNode;
+    public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
+            ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
     private Map<String, Double> target;
     private LinkedList<Double> sortedKeys;
     private double targetULLAT;
@@ -14,7 +14,7 @@ public class Search {
     private double targetWidth;
     private double targetHeight;
     private double targetLonDPP;
-    private Map<Double, LinkedList<QuadTree.Node>> classifiedNodes;
+    private Map<Double, LinkedList<Integer>> classifiedNodes;
     private String[][] renderGrid;
     private int numOfPics;
     private double rasterUlLon;
@@ -29,11 +29,8 @@ public class Search {
     private Map<String, Object> result;
     private String imgRoot;
 
-    Search(QuadTree imageTree, Map<String, Double> target, String nameFragment) {
+    Search(Map<String, Double> target, String nameFragment) {
         this.imgRoot = nameFragment;
-        this.imageTree = imageTree;
-        this.currentNode = imageTree.getRoot();
-        this.target = target;
         this.targetULLAT = target.get("ullat");
         this.targetULLON = target.get("ullon");
         this.targetLRLAT = target.get("lrlat");
@@ -44,25 +41,38 @@ public class Search {
         this.querySuccess = true;
         classifiedNodes = new HashMap<>();
         sortedKeys = new LinkedList<>();
-        seekValidNode(currentNode, DEPTH_OF_ROOT);
+        seekValidNode(0, ROOT_ULLAT, ROOT_ULLON, ROOT_LRLAT, ROOT_LRLON, 0, DEPTH_OF_ROOT);
         if (!querySuccess) {
             setValidMap();
         } else {
             renderGrid =
                     new String[classifiedNodes.size()][numOfPics / classifiedNodes.size()];
             setValidPics();
-            setResultInfo();
             setValidMap();
         }
     }
 
     // target has
     // lrlon, ullon, w, h, ullat, lrlat
-    public void seekValidNode(QuadTree.Node current, int depth) {
-        double ullat = current.getULLAT();
-        double ullon = current.getULLON();
-        double lrlat = current.getLRLAT();
-        double lrlon = current.getLRLON();
+    public void seekValidNode(int currentVal, double parentULLAT, double parentULLON, double parentLRLAT, double parentLRLON, int selfType, int depth) {
+        double ullat = parentULLAT;
+        double ullon = parentULLON;
+        double lrlat = parentLRLAT;
+        double lrlon = parentLRLON;
+        if (selfType == 1) {
+            lrlat = (ullat + lrlat) / 2;
+            lrlon = (ullon + lrlon) / 2;
+        } else if (selfType == 2) {
+            ullon = (ullon + lrlon) / 2;
+            lrlat = (ullat + lrlat) / 2;
+        } else if (selfType == 3) {
+            ullat = (ullat + lrlat) / 2;
+            lrlon = (ullon + lrlon) / 2;
+        } else if (selfType == 4) {
+            ullat = (ullat + lrlat) / 2;
+            ullon = (ullon + lrlon) / 2;
+        }
+
         if (lrlat > targetULLAT || targetLRLON < ullon
                 || lrlon < targetULLON || targetLRLAT > ullat) {
             if (depth == DEPTH_OF_ROOT) {
@@ -72,20 +82,30 @@ public class Search {
         }
         double lonDPP = (lrlon - ullon) / WIDTH_FOR_EACH_IMAGE;
         if (lonDPP > targetLonDPP && depth < MAX_HEIGHT) {
-            seekValidNode(current.getChild(1), depth + 1);
-            seekValidNode(current.getChild(2), depth + 1);
-            seekValidNode(current.getChild(3), depth + 1);
-            seekValidNode(current.getChild(4), depth + 1);
+            seekValidNode(currentVal * 10 + 1, ullat, ullon, lrlat, lrlon, 1, depth + 1);
+            seekValidNode(currentVal * 10 + 2, ullat, ullon, lrlat, lrlon, 2, depth + 1);
+            seekValidNode(currentVal * 10 + 3, ullat, ullon, lrlat, lrlon, 3, depth + 1);
+            seekValidNode(currentVal * 10 + 4, ullat, ullon, lrlat, lrlon, 4, depth + 1);
             return;
         }
-        if (!classifiedNodes.containsKey(current.getULLAT())) {
-            LinkedList<QuadTree.Node> lst = new LinkedList<>();
-            lst.add(current);
-            sortedKeys.addLast(current.getULLAT());
-            classifiedNodes.put(current.getULLAT(), lst);
+        if (!classifiedNodes.containsKey(ullat)) {
+            if (classifiedNodes.isEmpty()) {
+                rasterUlLat = ullat;
+                rasterUlLon = ullon;
+            }
+            LinkedList<Integer> lst = new LinkedList<>();
+            lst.add(currentVal);
+            sortedKeys.addLast(ullat);
+            classifiedNodes.put(ullat, lst);
+            rasterLrLat = lrlat;
+            rasterLrLon = lrlon;
+            rasterDepth = depth;
             numOfPics++;
         } else {
-            classifiedNodes.get(current.getULLAT()).addLast(current);
+            classifiedNodes.get(ullat).addLast(currentVal);
+            rasterLrLat = lrlat;
+            rasterLrLon = lrlon;
+            rasterDepth = depth;
             numOfPics++;
         }
     }
@@ -94,26 +114,14 @@ public class Search {
     public void setValidPics() {
         int rowIndex = 0;
         for (Double key: sortedKeys) {
-            LinkedList<QuadTree.Node> lst = classifiedNodes.get(key);
+            LinkedList<Integer> lst = classifiedNodes.get(key);
             for (int i = 0; i < lst.size(); i++) {
-                renderGrid[rowIndex][i] = imgRoot
-                        + ((QuadTree.Node) lst.get(i)).getVal() + ".png";
+                renderGrid[rowIndex][i] = imgRoot + lst.get(i) + ".png";
             }
             rowIndex++;
         }
     }
 
-    public void setResultInfo() {
-        Double firstKey = sortedKeys.getFirst();
-        Double lastKey = sortedKeys.getLast();
-        QuadTree.Node ul = classifiedNodes.get(firstKey).getFirst();
-        QuadTree.Node lr = classifiedNodes.get(lastKey).getLast();
-        rasterUlLon = ul.getULLON();
-        rasterUlLat = ul.getULLAT();
-        rasterLrLon = lr.getLRLON();
-        rasterLrLat = lr.getLRLAT();
-        rasterDepth = ul.depth();
-    }
 
     /*
     private String[][] render_grid;

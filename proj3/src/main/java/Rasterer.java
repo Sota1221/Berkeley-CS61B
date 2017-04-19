@@ -15,7 +15,6 @@ public class Rasterer {
     public static final int INITIAL_DEPTH = -1;
     public static final int MAX_HEIGHT = 7;
     public static final int INITIAL_VALUE = 0;
-    private QuadTree imageTree;
     private String imgRoot;
 
     /** imgRoot is the name of the directory containing the images.
@@ -23,8 +22,6 @@ public class Rasterer {
     public Rasterer(String imgRoot) {
         // construct QuadTree
         this.imgRoot = imgRoot;
-        imageTree = new QuadTree(INITIAL_VALUE, MAX_HEIGHT, MapServer.ROOT_ULLAT,
-                MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT, MapServer.ROOT_LRLON);
     }
 
     /**
@@ -56,14 +53,14 @@ public class Rasterer {
      *                    string. <br>
      * "query_success" -> Boolean, whether the query was able to successfully complete. Don't
      *                    forget to set this to true! <br>
-     * @see #REQUIRED_RASTER_REQUEST_PARAMS
+     * @see #//REQUIRED_RASTER_REQUEST_PARAMS
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
         // params has
         // lrlon, ullon, w, h, ullat, lrlat
         // londitude = vertical line
         Map<String, Object> results = new HashMap<>();
-        Search sr = new Search(imageTree, params, imgRoot);
+        Search sr = new Search(params, imgRoot);
         return sr.getValidMap();
     }
 
