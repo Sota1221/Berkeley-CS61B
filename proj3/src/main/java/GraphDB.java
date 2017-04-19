@@ -3,6 +3,8 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -19,6 +21,8 @@ import javax.xml.parsers.SAXParserFactory;
  * @author Alan Yao, Josh Hug
  */
 public class GraphDB {
+
+
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
 
@@ -28,10 +32,101 @@ public class GraphDB {
      * @param dbPath Path to the XML file to be parsed.
      */
 
-    private Graph myGraph;
+    private Map<Long, LinkedList<Long>> adj;
+    private Map<Integer, Set<Long>> actualNodes;
+    private Map<Long, Node> nodes = new LinkedHashMap<>();
+    private Node lastNode;
+    private Edge lastEdge;
+    private Set<Long> realNodes = new HashSet<>();
+    public static final double HALF_LON = -122.255859;
+
+
+    static class Node {
+        Long name;
+        double lat;
+        double lon;
+        String location;
+        double totalDis;
+        double heuristic;
+        long parent;
+
+
+        Node(String id, String lat, String lon) {
+            this.lat = Double.parseDouble(lat);
+            this.lon = Double.parseDouble(lon);
+            this.name = Long.parseLong(id);
+        }
+
+        public void addLocation(String place) {
+            location = place;
+        }
+
+        public double getDistance() {
+            return totalDis;
+        }
+
+        public void setDistance(double dis) {
+            this.totalDis = dis;
+        }
+
+        public void setHeuristic(double h) {
+            this.heuristic = h;
+        }
+
+        public double getHeuristic() {
+            return heuristic;
+        }
+
+        public void setParent(long parentID) {
+            this.parent = parentID;
+        }
+
+        public long getParentID() {
+            return parent;
+        }
+    }
+
+    static class Edge {
+        Long name;
+        String id;
+        LinkedList<Long> nodesInEdge;
+        boolean isValid = false;
+        int maxSpeed;
+
+        Edge(String id) {
+            this.id = id;
+            name = Long.parseLong(id);
+            nodesInEdge = new LinkedList<>();
+        }
+
+        public LinkedList<Long> getNodes() {
+            return nodesInEdge;
+        }
+
+        public void addNodeToEdge(String nodeID) {
+            Long nodeName = Long.parseLong(nodeID);
+            nodesInEdge.addLast(nodeName);
+        }
+
+        public void validateThisWay() {
+            isValid = true;
+        }
+
+        public void setMaxSpeed(String s) {
+            int speed = Integer.parseInt(s);
+            maxSpeed = speed;
+        }
+    }
+
+
+
 
     public GraphDB(String dbPath) {
         try {
+            this.adj = new HashMap<>();
+            this.actualNodes = new HashMap<Integer, Set<Long>>();
+            actualNodes.put(1, new HashSet<Long>());
+            actualNodes.put(-1, new HashSet<Long>());
             File inputFile = new File(dbPath);
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
@@ -65,122 +160,232 @@ public class GraphDB {
     /** Returns an iterable of all vertex IDs in the graph. */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
-        return myGraph.vertices();
+        return realNodes;
     }
 
     //TO DO
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long v) {
-        return myGraph.adj(v);
+        if (adj.get(v) == null) {
+            return new LinkedList<Long>();
+        }
+        return adj.get(v);
     }
 
     /** Returns the Euclidean distance between vertices v and w, where Euclidean distance
      *  is defined as sqrt( (lonV - lonV)^2 + (latV - latV)^2 ). */
     double distance(long v, long w) {
-        return myGraph.distance(v, w);
+        double diff1 = lon(v) - lon(w);
+        double diff2 = lat(v) - lat(w);
+        double squareSum = diff1 * diff1 + diff2 * diff2;
+        return Math.sqrt(squareSum);
+    }
+
+    public double distance(double lon, double lat, Node n) {
+        double diff1 = lon - n.lon;
+        double diff2 = lat - n.lat;
+        double squareSum = diff1 * diff1 + diff2 * diff2;
+        return Math.sqrt(squareSum);
     }
 
     /** Returns the vertex id closest to the given longitude and latitude. */
     long closest(double lon, double lat) {
-        return myGraph.closest(lon, lat);
+        Long closestNodeName = 0L;
+        double minDistance = 0;
+        int count = 0;
+        for (Node n: nodes.values()) {
+            double nodeDistance = distance(lon, lat, n);
+            if (count == 0 || nodeDistance < minDistance) {
+                minDistance = nodeDistance;
+                closestNodeName = n.name;
+            }
+            count++;
+        }
+        return closestNodeName;
     }
 
     long specialClosest(double lon, double lat) {
-        return myGraph.specialClosest(lon, lat);
+        Long closestNodeName = 0L;
+        double minDistance = 0;
+        int count = 0;
+        if (lon < HALF_LON) {
+            for (long v: actualNodes.get(1)) {
+                double nodeDistance = distance(lon, lat, nodes.get(v));
+                if (count == 0 || nodeDistance < minDistance) {
+                    minDistance = nodeDistance;
+                    closestNodeName = v;
+                }
+                count++;
+            }
+        } else {
+            for (long v: actualNodes.get(-1)) {
+                double nodeDistance = distance(lon, lat, nodes.get(v));
+                if (count == 0 || nodeDistance < minDistance) {
+                    minDistance = nodeDistance;
+                    closestNodeName = v;
+                }
+                count++;
+            }
+        }
+        return closestNodeName;
+    }
+
+    public double getNodeLat(Long v) {
+        return nodes.get(v).lat;
+    }
+
+    public double getNodeLon(Long v) {
+        return nodes.get(v).lon;
     }
 
 
     /** Longitude of vertex v. */
     double lon(long v) {
-        return myGraph.getNodeLon(v);
+        return getNodeLon(v);
     }
 
     /** Latitude of vertex v. */
     double lat(long v) {
-        return myGraph.getNodeLat(v);
+        return getNodeLat(v);
     }
 
-    public void createGraph() {
-        myGraph = new Graph(this);
+    public void addNode(Node n) {
+        this.nodes.put(n.name, n);
     }
 
-    public void  addNode(Graph.Node n) {
-        myGraph.addNode(n);
+    public void updateLastNode(Node n) {
+        lastNode = n;
     }
 
-    public void addEdge(Graph.Edge e) {
-        myGraph.addEdge(e);
+    public void updateLastEdge(Edge e) {
+        lastEdge = e;
     }
 
-    public void updateLastNode(Graph.Node n) {
-        myGraph.updateLastNode(n);
+    public Node getLastNode() {
+        return lastNode;
     }
 
-    public void updateLastEdge(Graph.Edge e) {
-        myGraph.updateLastEdge(e);
+    public Edge getLastEdge() {
+        return lastEdge;
     }
 
-    public Graph.Node getLastNode() {
-        return myGraph.getLastNode();
+    public void addNodeToLastEdge(String nodeID) {
+        Edge last = getLastEdge();
+        last.addNodeToEdge(nodeID);
     }
-
-    public Graph.Edge getLastEdge() {
-        return myGraph.getLastEdge();
-    }
-
-    public void addNodeToLastEdge(String nodeId) {
-        myGraph.addNodeToLastEdge(nodeId);
-    }
-
     public void validateLastWay() {
-        myGraph.validateLastWay();
+        getLastEdge().validateThisWay();
     }
 
-    public void addLocationToLastNode(String location) {
-        myGraph.addLocationToLastNode(location);
+    public void addLocationToLastNode(String name) {
+        getLastNode().addLocation(name);
     }
 
-    public void connectAllGraph() {
-        myGraph.connectAll();
+
+    public void connect(Long v, Long w) {
+        boolean isFullV = adj.get(v) != null;
+        boolean isFullW = adj.get(w) != null;
+        if (!isFullV && isFullW) {
+            adj.get(w).add(v);
+            LinkedList<Long> lst = new LinkedList<>();
+            lst.add(w);
+            adj.put(v, lst);
+            realNodes.add(v);
+            if (nodes.get(v).lon < HALF_LON) {
+                actualNodes.get(1).add(v);
+            } else {
+                actualNodes.get(-1).add(v);
+            }
+            return;
+        } else if (isFullV && !isFullW) {
+            adj.get(v).add(w);
+            LinkedList<Long> lst = new LinkedList<>();
+            lst.add(v);
+            adj.put(w, lst);
+            realNodes.add(w);
+            if (nodes.get(w).lon < HALF_LON) {
+                actualNodes.get(1).add(w);
+            } else {
+                actualNodes.get(-1).add(w);
+            }
+            return;
+        } else if (!isFullV && !isFullW) {
+            LinkedList<Long> lst = new LinkedList<>();
+            lst.add(w);
+            LinkedList<Long> lst2 = new LinkedList<>();
+            lst2.add(v);
+            adj.put(v, lst);
+            adj.put(w, lst2);
+            realNodes.add(v);
+            realNodes.add(w);
+            if (nodes.get(v).lon < HALF_LON) {
+                actualNodes.get(1).add(v);
+            } else {
+                actualNodes.get(-1).add(v);
+            }
+            if (nodes.get(w).lon < HALF_LON) {
+                actualNodes.get(1).add(w);
+            } else {
+                actualNodes.get(-1).add(w);
+            }
+            return;
+        } else {
+            adj.get(v).add(w);
+            adj.get(w).add(v);
+            return;
+        }
     }
+
 
     public void connectLastWay() {
-        myGraph.connectLastWay();
+        if (lastEdge.isValid) {
+            LinkedList<Long> lst = lastEdge.nodesInEdge;
+            for (int i = 0; i < lst.size() - 1; i++) {
+                connect(lst.get(i), lst.get(i + 1));
+            }
+        }
     }
 
     public void setMaxSpeed(String s) {
-        myGraph.setMaxSpeed(s);
+        getLastEdge().setMaxSpeed(s);
     }
 
     public void setParent(long current, long next) {
-        myGraph.setParent(current, next);
+        Node nextNode = nodes.get(next);
+        nextNode.setParent(current);
     }
+
 
     public long getParent(long nodeID) {
-        return myGraph.getParent(nodeID);
+        Node current = nodes.get(nodeID);
+        return current.parent;
     }
+
 
     public boolean isLastValid() {
-        return myGraph.isLastValid();
-    }
-
-    public void setLastWayName(String s) {
-        myGraph.setLastWayName(s);
+        return getLastEdge().isValid;
     }
 
     public void setHeuristic(long nodeID, long goalID) {
-        myGraph.setHeuristic(nodeID, goalID);
+        nodes.get(nodeID).setHeuristic(distance(nodeID, goalID));
     }
 
     public double getScore(long nodeID) {
-        return myGraph.getScore(nodeID);
+        Node n = nodes.get(nodeID);
+        return n.totalDis + n.heuristic;
     }
 
-    public double getHypoScore(long current, long nodeID, long goal) {
-        return myGraph.getHypoScore(current, nodeID, goal);
+    public double getHypoScore(long current, long nextNodeID, long goalID) {
+        double h = distance(nextNodeID, goalID);
+        double preCost = nodes.get(current).totalDis;
+        double dis = distance(current, nextNodeID);
+        return h + preCost + dis;
     }
 
     public void updateDistance(long previous, long current) {
-        myGraph.updateDistance(previous, current);
+        double currentDis = distance(previous, current);
+        double preDis = nodes.get(previous).totalDis;
+        nodes.get(current).setDistance(currentDis + preDis);
     }
+
 }

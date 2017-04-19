@@ -42,7 +42,6 @@ public class Router {
                 }
                 if (graphMinPQ.contains(v)) {
                     if (g.getHypoScore(currentNodeID, v, goadNodeID) < g.getScore(v)) {
-                        graphMinPQ.remove(v);
                         g.updateDistance(currentNodeID, v);
                         g.setHeuristic(v, goadNodeID);
                         graphMinPQ.add(v);

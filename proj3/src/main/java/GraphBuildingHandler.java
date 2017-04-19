@@ -41,7 +41,6 @@ public class GraphBuildingHandler extends DefaultHandler {
 
     public GraphBuildingHandler(GraphDB g) {
         this.g = g;
-        g.createGraph();
     }
 
     /**
@@ -75,7 +74,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             String id = attributes.getValue("id");
             String lat = attributes.getValue("lat");
             String lot = attributes.getValue("lon");
-            Graph.Node n = new Graph.Node(id, lat, lot);
+            GraphDB.Node n = new GraphDB.Node(id, lat, lot);
             g.addNode(n);
             g.updateLastNode(n);
 
@@ -83,8 +82,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* We encountered a new <way...> tag. */
             activeState = "way";
             String id = attributes.getValue("id");
-            Graph.Edge e = new Graph.Edge(id);
-            g.addEdge(e);
+            GraphDB.Edge e = new GraphDB.Edge(id);
             g.updateLastEdge(e);
 //            System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {
@@ -104,22 +102,30 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* While looking at a way, we found a <tag...> tag. */
             String k = attributes.getValue("k");
             String v = attributes.getValue("v");
-            if (k.equals("maxspeed")) {
+//            if (k.equals("maxspeed")) {
                 //System.out.println("Max Speed: " + v);
                 /* TO DO: set the max speed of the "current way" here. */
-                String speed = v.split(" ")[0];
-                g.setMaxSpeed(speed);
-            } else if (k.equals("highway")) {
+//                String speed = v.split(" ")[0];
+//                g.setMaxSpeed(speed);
+//            } else if (k.equals("highway")) {
+                //System.out.println("Highway type: " + v);
+                /* TO Do;  Figure out whether this way and its connections are valid. */
+                /* Hint: Setting a "flag" is good enough! */
+//                if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
+//                    g.validateLastWay();
+//                }
+//            } else if (k.equals("name")) {
+                //System.out.println("Way Name: " + v);
+//                g.setLastWayName(v);
+            if (k.equals("highway")) {
                 //System.out.println("Highway type: " + v);
                 /* TO Do;  Figure out whether this way and its connections are valid. */
                 /* Hint: Setting a "flag" is good enough! */
                 if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
                     g.validateLastWay();
                 }
-            } else if (k.equals("name")) {
-                //System.out.println("Way Name: " + v);
-                g.setLastWayName(v);
             }
+
 //            System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
                 .equals("name")) {
