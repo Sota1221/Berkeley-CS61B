@@ -30,7 +30,7 @@ public class Router {
         Set<Long> marked = new HashSet<>();
 //        Map<Long, Long> pathMap = new HashMap<>();
         long currentNodeID = graphMinPQ.poll();
-        while (marked.size() == 0 || !graphMinPQ.isEmpty()) {
+        while (true) {
             if (currentNodeID == goadNodeID) {
                 break;
             }
@@ -97,5 +97,4 @@ public class Router {
             }
         }
     }
-
 }
