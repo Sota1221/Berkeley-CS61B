@@ -85,6 +85,11 @@ public class GraphDB {
         return myGraph.closest(lon, lat);
     }
 
+    long specialClosest(double lon, double lat) {
+        return myGraph.specialClosest(lon, lat);
+    }
+
+
     /** Longitude of vertex v. */
     double lon(long v) {
         return myGraph.getNodeLon(v);
@@ -147,11 +152,35 @@ public class GraphDB {
         myGraph.setMaxSpeed(s);
     }
 
+    public void setParent(long current, long next) {
+        myGraph.setParent(current, next);
+    }
+
+    public long getParent(long nodeID) {
+        return myGraph.getParent(nodeID);
+    }
+
     public boolean isLastValid() {
         return myGraph.isLastValid();
     }
 
     public void setLastWayName(String s) {
         myGraph.setLastWayName(s);
+    }
+
+    public void setHeuristic(long nodeID, long goalID) {
+        myGraph.setHeuristic(nodeID, goalID);
+    }
+
+    public double getScore(long nodeID) {
+        return myGraph.getScore(nodeID);
+    }
+
+    public double getHypoScore(long current, long nodeID, long goal) {
+        return myGraph.getHypoScore(current, nodeID, goal);
+    }
+
+    public void updateDistance(long previous, long current) {
+        myGraph.updateDistance(previous, current);
     }
 }

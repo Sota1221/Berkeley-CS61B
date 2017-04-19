@@ -13,13 +13,14 @@ public class QuadTree {
 
 
         Node(int val, int depth,
-             double[] location) {
+             double ullat, double ullon,
+             double lrlat, double lrlon) {
             this.val = val;
             this.depth = depth;
-            this.ULLAT = location[0];
-            this.ULLON = location[1];
-            this.LRLAT = location[2];
-            this.LRLON = location[3];
+            this.ULLAT = ullat;
+            this.ULLON = ullon;
+            this.LRLAT = lrlat;
+            this.LRLON = lrlon;
         }
 
         public Node getChild(int childNumber) {
@@ -66,70 +67,43 @@ public class QuadTree {
 
 
      */
-    public QuadTree(int initialValue, int maxHeight, double[] location) {
-        root = new Node(initialValue, 0, location);
-        generateQuadTree(root, maxHeight, location);
+    public QuadTree(int initialValue, int maxHeight, double ullat, double ullon,
+                    double lrlat, double lrlon) {
+        root = new Node(initialValue, 0, ullat, ullon, lrlat, lrlon);
+        generateQuadTree(root, maxHeight, ullat, ullon, lrlat, lrlon);
     }
 
     // creates 4 children unless currentNode's depth is equal to maxHeight
     public Node generateQuadTree(Node currentNode, int maxHeight,
-                                 double[] location) {
+                                 double ullat, double ullon,
+                                 double lrlat, double lrlon) {
         if (currentNode.depth >= maxHeight) {
             return currentNode;
         }
-        double[] child1Location = setLocation(1, location);
-        double[] child2Location = setLocation(2, location);
-        double[] child3Location = setLocation(3, location);
-        double[] child4Location = setLocation(4, location);
+        double halfLat = (ullat + lrlat) / 2;
+        double halfLon = (ullon + lrlon) / 2;
         currentNode.child1 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 1,
-                        depth(currentNode) + 1, child1Location),
-                maxHeight, child1Location);
+                        depth(currentNode) + 1, ullat, ullon,
+                         halfLat, halfLon),
+                maxHeight, ullat, ullon, halfLat, halfLon);
         currentNode.child2 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 2,
-                        depth(currentNode) + 1, child2Location),
-                maxHeight, child2Location);
+                        depth(currentNode) + 1, ullat, halfLon,
+                        halfLat, lrlon),
+                maxHeight, ullat, halfLon, halfLat, lrlon);
         currentNode.child3 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 3,
-                        depth(currentNode) + 1, child3Location),
-                maxHeight, child3Location);
+                        depth(currentNode) + 1, halfLat, ullon, lrlat,
+                        halfLon),
+                maxHeight, halfLat, ullon, lrlat, halfLon);
         currentNode.child4 = generateQuadTree(
                 new Node(getVal(currentNode) * 10 + 4,
-                        depth(currentNode) + 1, child4Location),
-                maxHeight, child4Location);
+                        depth(currentNode) + 1, halfLat, halfLon, lrlat, lrlon),
+                maxHeight, halfLat, halfLon, lrlat, lrlon);
         return currentNode;
     }
 
-    /*     this.ULLAT = location[0];
-           this.ULLON = location[1];
-           this.LRLAT = location[2];
-           this.LRLON = location[3];
-           */
-    public double[] setLocation(int childNumber, double[] parentLocation) {
-        double[] childLocation = new double[4];
-        if (childNumber == 1) {
-            childLocation[0] = parentLocation[0];  // ULLAT
-            childLocation[1] = parentLocation[1];  // ULLON
-            childLocation[2] = (parentLocation[0] + parentLocation[2]) / 2; // LRLAT
-            childLocation[3] = (parentLocation[1] + parentLocation[3]) / 2; // LRLON
-        } else if (childNumber == 2) {
-            childLocation[0] = parentLocation[0];
-            childLocation[1] = (parentLocation[1] + parentLocation[3]) / 2;
-            childLocation[2] = (parentLocation[0] + parentLocation[2]) / 2;
-            childLocation[3] = parentLocation[3];
-        } else if (childNumber == 3) {
-            childLocation[0] = (parentLocation[0] + parentLocation[2]) / 2;
-            childLocation[1] = parentLocation[1];
-            childLocation[2] = parentLocation[2];
-            childLocation[3] = (parentLocation[1] + parentLocation[3]) / 2;
-        } else {
-            childLocation[0] = (parentLocation[0] + parentLocation[2]) / 2;
-            childLocation[1] = (parentLocation[1] + parentLocation[3]) / 2;
-            childLocation[2] = parentLocation[2];
-            childLocation[3] = parentLocation[3];
-        }
-        return childLocation;
-    }
 
 
     public Node getRoot() {

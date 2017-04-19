@@ -90,19 +90,6 @@ public class Search {
         }
     }
 
-/*    public void putToSortedKeys(Double key) {
-        if (sortedKeys.isEmpty()) {
-            sortedKeys.add(key);
-            return;
-        }
-        for (int i = 0; i < sortedKeys.size(); i++) {
-            if (key > sortedKeys.get(i)) {
-                sortedKeys.add(i, key);
-                return;
-            }
-        }
-        sortedKeys.addLast(key);
-    } */
 
     public void setValidPics() {
         int rowIndex = 0;

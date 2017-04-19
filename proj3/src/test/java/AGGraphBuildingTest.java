@@ -4,6 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Basic sanity check for your GraphDB construction. This test simply tests a small number of

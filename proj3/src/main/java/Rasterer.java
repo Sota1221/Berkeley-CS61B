@@ -23,12 +23,8 @@ public class Rasterer {
     public Rasterer(String imgRoot) {
         // construct QuadTree
         this.imgRoot = imgRoot;
-        double[] location = new double[4];
-        location[0] = MapServer.ROOT_ULLAT;
-        location[1] = MapServer.ROOT_ULLON;
-        location[2] = MapServer.ROOT_LRLAT;
-        location[3] = MapServer.ROOT_LRLON;
-        imageTree = new QuadTree(INITIAL_VALUE, MAX_HEIGHT, location);
+        imageTree = new QuadTree(INITIAL_VALUE, MAX_HEIGHT, MapServer.ROOT_ULLAT,
+                MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT, MapServer.ROOT_LRLON);
     }
 
     /**

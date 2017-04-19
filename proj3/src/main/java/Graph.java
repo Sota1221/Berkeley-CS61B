@@ -38,43 +38,25 @@ public class Graph {
 
 
     public void connect(Long v, Long w) {
-        boolean flagV = adj.containsKey(v);
-        boolean flagW = adj.containsKey(w);
-        if (!flagV || !flagW) {
-            if (!flagV && flagW) {
-                LinkedList<Long> wList = adj.get(w);
-                LinkedList<Long> lst = new LinkedList<Long>();
-                lst.add(w);
-                adj.put(v, lst);
+
+        boolean isFullV = !adj.get(v).isEmpty();
+        boolean isFullW = !adj.get(w).isEmpty();
+        if (!isFullV || !isFullW) {
+            if (!isFullV && isFullW) {
                 actualNodes.add(v);
                 V++;
-                wList.add(v);
-            } else if (flagV && !flagW) {
-                LinkedList<Long> vList = adj.get(v);
-                LinkedList<Long> lst = new LinkedList<Long>();
-                lst.add(v);
-                adj.put(w, lst);
+            } else if (isFullV && !isFullW) {
                 actualNodes.add(w);
                 V++;
-                vList.add(w);
             } else {
-                LinkedList<Long> lst1 = new LinkedList<Long>();
-                LinkedList<Long> lst2 = new LinkedList<Long>();
-                lst1.add(v);
-                lst2.add(w);
-                adj.put(w, lst1);
-                adj.put(v, lst2);
                 actualNodes.add(w);
                 actualNodes.add(v);
                 V++;
                 V++;
             }
-        } else {
-            LinkedList<Long> vList = adj.get(v);
-            LinkedList<Long> wList = adj.get(w);
-            vList.add(w);
-            wList.add(v);
         }
+        adj.get(v).add(w);
+        adj.get(w).add(v);
         E++;
     }
 
@@ -89,6 +71,22 @@ public class Graph {
         LinkedList<Long> lst = adj.get(v);
         return lst;
     }
+
+    public long specialClosest(double lon, double lat) {
+        Long closestNodeName = 0L;
+        double minDistance = 0;
+        int count = 0;
+        for (long v: actualNodes) {
+            double nodeDistance = distance(lon, lat, nodes.get(v));
+            if (count == 0 || nodeDistance < minDistance) {
+                minDistance = nodeDistance;
+                closestNodeName = v;
+            }
+            count++;
+        }
+        return closestNodeName;
+    }
+
 
     public long closest(double lon, double lat) {
         Long closestNodeName = 0L;
@@ -108,7 +106,7 @@ public class Graph {
     public double distance(double lon, double lat, Node n) {
         double diff1 = lon - n.lon;
         double diff2 = lat - n.lat;
-        double squareSum = Math.pow(diff1, 2) + Math.pow(diff2, 2);
+        double squareSum = diff1 * diff1 + diff2 * diff2;
         return Math.sqrt(squareSum);
     }
 
@@ -130,6 +128,8 @@ public class Graph {
 
 
     public void addNode(Node n) {
+        LinkedList<Long> lst =  new LinkedList<>();
+        adj.put(n.name, lst);
         this.nodes.put(n.name, n);
     }
 
@@ -227,6 +227,22 @@ public class Graph {
         }
     }
 
+
+    public void setHeuristic(long nodeID, long goalID) {
+        nodes.get(nodeID).setHeuristic(distance(nodeID, goalID));
+    }
+
+    public double getScore(long nodeID) {
+        Node n = nodes.get(nodeID);
+        return n.getDistance() + n.getHeuristic();
+    }
+
+    public void updateDistance(long previous, long current) {
+        double currentDis = distance(previous, current);
+        double preDis = nodes.get(previous).getDistance();
+        nodes.get(current).setDistance(currentDis + preDis);
+    }
+
     public void setLastWayName(String s) {
         getLastEdge().setWayName(s);
     }
@@ -239,6 +255,23 @@ public class Graph {
         return getLastEdge().isValid;
     }
 
+    public double getHypoScore(long current, long nextNodeID, long goalID) {
+        double h = distance(nextNodeID, goalID);
+        double preCost = nodes.get(current).getDistance();
+        double dis = distance(current, nextNodeID);
+        return h + preCost + dis;
+    }
+
+    public void setParent(long current, long next) {
+        Node nextNode = nodes.get(next);
+        nextNode.setParent(current);
+    }
+
+    public long getParent(long nodeID) {
+        Node current = nodes.get(nodeID);
+        return current.parent;
+    }
+
 
     static class Node {
         Long name;
@@ -246,6 +279,10 @@ public class Graph {
         double lat;
         double lon;
         String location;
+        double totalDis;
+        double heuristic;
+        long parent;
+
 
         Node(String id, String lat, String lon) {
             this.id = id;
@@ -257,6 +294,30 @@ public class Graph {
         public void addLocation(String place) {
             location = place;
         }
+
+        public double getDistance() {
+            return totalDis;
+        }
+
+        public void setDistance(double dis) {
+            this.totalDis = dis;
+        }
+
+        public void setHeuristic(double h) {
+            this.heuristic = h;
+        }
+
+        public double getHeuristic() {
+            return heuristic;
+        }
+
+        public void setParent(long parentID) {
+            this.parent = parentID;
+        }
+
+        public long getParentID() {
+            return parent;
+        }
     }
 
 
@@ -264,23 +325,23 @@ public class Graph {
         Long name;
         String id;
         String wayName;
-        LinkedList<Long> nodes;
+        LinkedList<Long> nodesInEdge;
         boolean isValid = false;
         int maxSpeed;
 
         Edge(String id) {
             this.id = id;
             name = Long.parseLong(id);
-            nodes = new LinkedList<>();
+            nodesInEdge = new LinkedList<>();
         }
 
         public LinkedList<Long> getNodes() {
-            return nodes;
+            return nodesInEdge;
         }
 
         public void addNodeToEdge(String nodeID) {
             Long nodeName = Long.parseLong(nodeID);
-            nodes.addLast(nodeName);
+            nodesInEdge.addLast(nodeName);
         }
 
         public void validateThisWay() {
@@ -295,5 +356,7 @@ public class Graph {
         public void setWayName(String s) {
             wayName = s;
         }
+
+
     }
 }
