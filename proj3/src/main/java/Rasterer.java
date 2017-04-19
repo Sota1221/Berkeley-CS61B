@@ -59,7 +59,6 @@ public class Rasterer {
         // params has
         // lrlon, ullon, w, h, ullat, lrlat
         // londitude = vertical line
-        Map<String, Object> results = new HashMap<>();
         Search sr = new Search(params, imgRoot);
         return sr.getValidMap();
     }

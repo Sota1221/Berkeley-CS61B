@@ -50,6 +50,7 @@ public class Search {
             setValidPics();
             setValidMap();
         }
+
     }
 
     // target has

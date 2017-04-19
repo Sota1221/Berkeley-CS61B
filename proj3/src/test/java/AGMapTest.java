@@ -32,7 +32,7 @@ public abstract class AGMapTest {
         }
         graph = new GraphDB(OSM_DB_PATH);
         rasterer = new Rasterer(IMG_ROOT);
-        MapServer.initialize();
+ //       MapServer.initialize();
         params = readTestParameters(TEST_PARAMS);
         initialized = true;
     }
