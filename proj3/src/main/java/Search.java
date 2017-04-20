@@ -55,7 +55,8 @@ public class Search {
 
     // target has
     // lrlon, ullon, w, h, ullat, lrlat
-    public void seekValidNode(int currentVal, double parentULLAT, double parentULLON, double parentLRLAT, double parentLRLON, int selfType, int depth) {
+    public void seekValidNode(int currentVal, double parentULLAT, double parentULLON,
+                              double parentLRLAT, double parentLRLON, int selfType, int depth) {
         double ullat = parentULLAT;
         double ullon = parentULLON;
         double lrlat = parentLRLAT;

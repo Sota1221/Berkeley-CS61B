@@ -3,12 +3,7 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 //import java.io.InterruptedIOException;
 
@@ -38,20 +33,21 @@ public class GraphDB {
      * You do not need to modify this constructor, but you're welcome to do so.
      * @param dbPath Path to the XML file to be parsed.
      */
-
+    Trie prefixTre = new Trie();
     private Map<Long, LinkedList<Long>> adj;
     private Map<Integer, Set<Long>> actualNodes;
     private Map<Long, Node> nodes = new LinkedHashMap<>();
     private Node lastNode;
     private Edge lastEdge;
+    Map<String, Set<Node>> locationMap = new HashMap<>();
     private Set<Long> realNodes = new HashSet<>();
     public static final double HALF_LON = -122.255859;
 
 
     static class Node {
         Long name;
-        double lat;
-        double lon;
+        Double lat;
+        Double lon;
         String location;
         double totalDis;
         double heuristic;
@@ -170,6 +166,10 @@ public class GraphDB {
         return realNodes;
     }
 
+    public Map<Long, Node> getNodes() {
+        return nodes;
+    }
+
     //TO DO
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long v) {
@@ -285,7 +285,15 @@ public class GraphDB {
     }
 
     public void addLocationToLastNode(String name) {
+        prefixTre.root.add(name);
         getLastNode().addLocation(name);
+        if (!locationMap.containsKey(name)) {
+            Set<Node> s = new HashSet<>();
+            s.add(lastNode);
+            locationMap.put(name, s);
+        } else {
+            locationMap.get(name).add(lastNode);
+        }
     }
 
 
