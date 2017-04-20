@@ -4,10 +4,18 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.*;
+
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 
 /* Maven is used to pull in these dependencies. */

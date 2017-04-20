@@ -111,9 +111,6 @@ public class GraphBuildingHandler extends DefaultHandler {
                 //System.out.println("Highway type: " + v);
                 /* TO Do;  Figure out whether this way and its connections are valid. */
                 /* Hint: Setting a "flag" is good enough! */
-//                if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
-//                    g.validateLastWay();
-//                }
 //            } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
 //                g.setLastWayName(v);
@@ -136,9 +133,6 @@ public class GraphBuildingHandler extends DefaultHandler {
             last node that you looked at (check the first if-case). */
 //            System.out.println("Node's name: " + attributes.getValue("v"));
             if (attributes.getValue("k").equals("name")) {
-                /*if (attributes.getValue("v").equals("Chaparral Peak") || attributes.getValue("v").equals("Chaparral")) {
-                    System.out.println("hello");
-                }*/
                 String locationName = attributes.getValue("v");
                 g.addLocationToLastNode(locationName);
             }
