@@ -173,10 +173,11 @@ public class GraphDB {
     //TO DO
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long v) {
-        if (adj.get(v) == null) {
+        Iterable<Long> temp = adj.get(v);
+        if (temp == null) {
             return new LinkedList<Long>();
         }
-        return adj.get(v);
+        return temp;
     }
 
     /** Returns the Euclidean distance between vertices v and w, where Euclidean distance
