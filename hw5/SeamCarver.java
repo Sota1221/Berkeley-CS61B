@@ -11,7 +11,7 @@ public class SeamCarver {
     private int minIndexInRow;
 
     public SeamCarver(Picture picture) {
-        currentPic = picture;
+        currentPic = new Picture(picture);
         width = picture.width();
         height = picture.height();
         energygrid = new double[width][height];
@@ -83,8 +83,9 @@ public class SeamCarver {
         int greenDifY = above.getGreen() - below.getGreen();
 
         int xGrad = redDifX * redDifX + blueDifX * blueDifX + greenDifX * greenDifX;
-        int yGrad = redDifY * redDifY + blueDifY * blueDifY + greenDifY + greenDifY;
-        return xGrad + yGrad;
+        int yGrad = redDifY * redDifY + blueDifY * blueDifY + greenDifY * greenDifY;
+        double result = xGrad + yGrad;
+        return result;
     }
 
     // sequence of indices for horizontal seam
