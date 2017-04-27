@@ -4,6 +4,7 @@ import edu.princeton.cs.algs4.Picture;
 import java.awt.*;
 
 public class SeamCarver {
+    private Picture original;
     private Picture currentPic;
     private int width;
     private int height;
@@ -11,6 +12,7 @@ public class SeamCarver {
     private int minIndexInRow;
 
     public SeamCarver(Picture picture) {
+        original = picture;
         currentPic = new Picture(picture);
         width = picture.width();
         height = picture.height();
@@ -82,8 +84,8 @@ public class SeamCarver {
         int blueDifY = above.getBlue() - below.getBlue();
         int greenDifY = above.getGreen() - below.getGreen();
 
-        int xGrad = redDifX * redDifX + blueDifX * blueDifX + greenDifX * greenDifX;
-        int yGrad = redDifY * redDifY + blueDifY * blueDifY + greenDifY * greenDifY;
+        double xGrad = redDifX * redDifX + blueDifX * blueDifX + greenDifX * greenDifX;
+        double yGrad = redDifY * redDifY + blueDifY * blueDifY + greenDifY * greenDifY;
         double result = xGrad + yGrad;
         return result;
     }
@@ -99,50 +101,18 @@ public class SeamCarver {
             energygrid[i][0] = energy(i, 0);
         }
         if (height == 1) return;
-        boolean isLastRow = false;
-        for (int yIndex = 1; yIndex < height; yIndex++) {
-            if (yIndex == height - 1) {
-                isLastRow = true;
-            }
-            double tempMin = 0;
-            for (int xIndex = 0; xIndex < width; xIndex++) {
-                double currentEnergy = energy(xIndex, yIndex);
-                double aboveEnergy = energygrid[xIndex][yIndex - 1];
-                double min = aboveEnergy;
-                if (width == 1) {
-                    energygrid[xIndex][yIndex] = currentEnergy + aboveEnergy;
-                    if (isLastRow) {
-                        minIndexInRow = 0;
+        for (int j = 1; j < height - 1; j++) {  // smallest の node の 2d array を作った
+            for (int i = 0; i < width; i++) {
+                for (int c = -1; c <= 1; c++) {
+                    if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
+                        continue;
                     }
-                    continue;
-                }
-                // find min
-                double aboveLeftEnergy;
-                double aboveRightEnergy;
-                if (xIndex == 0) {
-                    // not to make it min
-                    aboveLeftEnergy = aboveEnergy + 1;
-                    aboveRightEnergy = energygrid[xIndex + 1][yIndex - 1];
-                } else if (xIndex == width - 1) {
-                    aboveLeftEnergy = energygrid[xIndex - 1][yIndex - 1];
-                    aboveRightEnergy = currentEnergy + 1;
-                } else {
-                    aboveLeftEnergy = energygrid[xIndex - 1][yIndex - 1];
-                    aboveRightEnergy = energygrid[xIndex + 1][yIndex - 1];
-                }
-                min = Math.min(min, aboveLeftEnergy);
-                min = Math.min(min, aboveRightEnergy);
-                double totalCurrentEnergy = currentEnergy + min;
-                energygrid[xIndex][yIndex] = totalCurrentEnergy;
-                if (isLastRow) {
-                    if (xIndex == 0) {
-                        tempMin = totalCurrentEnergy;
-                        minIndexInRow = 0;
+                    if (energygrid[i + c][j + 1] != 0) {
+                        double oldEnergy = energygrid[i + c][j + 1];
+                        double newEnergy = energygrid[i][j] + energy(i + c, j + 1);
+                        energygrid[i + c][j + 1] = Math.min(oldEnergy, newEnergy);
                     } else {
-                        if (totalCurrentEnergy < tempMin) {
-                            tempMin = totalCurrentEnergy;
-                            minIndexInRow = xIndex;
-                        }
+                        energygrid[i + c][j + 1] = energygrid[i][j] + energy(i + c, j + 1);
                     }
                 }
             }
@@ -152,6 +122,15 @@ public class SeamCarver {
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
         helperFillGrid();
+        int minIndex = 0;
+        double min = energygrid[0][height - 1];
+        for (int s = 1; s < width; s++) {
+            double newMin = energygrid[s][height - 1];
+            if (newMin < min) {
+                min = newMin;
+                minIndex = s;
+            }
+        }
         int[] result = new int[height];
         result[height - 1] = minIndexInRow;
         if (height == 1) {
