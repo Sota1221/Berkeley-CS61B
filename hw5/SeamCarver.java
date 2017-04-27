@@ -99,7 +99,7 @@ public class SeamCarver {
         for (int i = 0; i < tPic.width(); i++) {
             for (int k = 0; k < tPic.height(); k++) {
                 Color c = temp.get(k, i);
-                temp.set(i, k, c);
+                tPic.set(i, k, c);
                 tEnergyGrid[i][k] = tempE[k][i];
             }
         }
