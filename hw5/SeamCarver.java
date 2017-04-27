@@ -143,34 +143,44 @@ public class SeamCarver {
             return result;
         }
         double tempMin;
-        for (int yIndex = height - 1; yIndex > 0; yIndex--) {
-            tempMin = energygrid[minIndexInRow][yIndex - 1];
-            if (minIndexInRow == 0) {
-                double aboveRight = energygrid[minIndexInRow + 1][yIndex - 1];
-                if (aboveRight < tempMin) {
-                    minIndexInRow = minIndexInRow + 1;
-                }
-            } else if (minIndexInRow == width - 1) {
-                double aboveLeft = energygrid[minIndexInRow - 1][yIndex - 1];
-                if (aboveLeft < tempMin) {
-                    minIndexInRow = minIndexInRow - 1;
-                }
+
+
+        double d1;
+        double d2;
+        double d3;
+
+        int trackIndex = minIndex;
+
+        for (int i = 1; i < height; i++) {
+            if (trackIndex == 0) {
+                d1 = 99999;
+                d2 = energygrid[trackIndex][height - i - 1];
+                d3 = energygrid[trackIndex + 1][height - i - 1];
+            } else if (trackIndex == width - 1) {
+                d1 = energygrid[trackIndex - 1][height - i - 1];
+                d2 = energygrid[trackIndex][height - i - 1];
+                d3 = 99999;
             } else {
-                double aboveRight = energygrid[minIndexInRow - 1][yIndex - 1];
-                double aboveLeft = energygrid[minIndexInRow + 1][yIndex - 1];
-                int tempMinIndex;
-                if (aboveLeft < aboveRight) {
-                    if (aboveLeft < tempMin) {
-                        minIndexInRow = minIndexInRow - 1;
-                    }
-                } else {
-                    if (aboveRight < tempMin) {
-                        minIndexInRow = minIndexInRow + 1;
-                    }
-                }
+                d1 = energygrid[trackIndex - 1][height - i - 1];
+                d2 = energygrid[trackIndex][height - i - 1];
+                d3 = energygrid[trackIndex + 1][height - i - 1];
             }
-            result[yIndex - 1] = minIndexInRow;
+            double dif = min - energy(trackIndex, height - i - 1);
+            int addTrack;
+            if (dif == min - d1) {
+                trackIndex = trackIndex - 1;
+            } else if (dif == min - d2) {
+                trackIndex = trackIndex + 0;
+            } else {
+                trackIndex = trackIndex + 1;
+            }
+            /*
+            int indexOfMin = minOfThreeIndex(d1, d2, d3);
+            */
+            result[height - i - 1] = trackIndex;
+
         }
+
         return result;
     }
 
