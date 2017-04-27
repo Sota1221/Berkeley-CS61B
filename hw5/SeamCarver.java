@@ -1,27 +1,27 @@
-import edu.princeton.cs.algs4.*;
 import edu.princeton.cs.algs4.Picture;
+import java.awt.Color;
 
-import java.awt.*;
 
 public class SeamCarver {
-    private Picture original;
     private Picture currentPic;
     private int width;
     private int height;
+    private double[][] energy;
     private double[][] energygrid;
     private int minIndexInRow;
 
     public SeamCarver(Picture picture) {
-        original = picture;
         currentPic = new Picture(picture);
         width = picture.width();
         height = picture.height();
+        energy = new double[width][height];
+        fillEnergy();
         energygrid = new double[width][height];
     }
 
     // current picture
     public Picture picture() {
-        return currentPic;
+        return new Picture(currentPic);
     }
 
     // width of current picture
@@ -92,16 +92,34 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        int[] result = new int[width];
-        return result;
+        Picture temp = currentPic;
+        Picture tPic = new Picture(temp.height(), temp.width());
+        double[][] tempE = energy;
+        double[][] tEnergyGrid = new double[tempE[0].length][tempE.length];
+        for (int i = 0; i < tPic.width(); i++) {
+            for (int k = 0; k < tPic.height(); k++) {
+                Color c = temp.get(k, i);
+                temp.set(i, k, c);
+                tEnergyGrid[i][k] = tempE[k][i];
+            }
+        }
+        currentPic = tPic;
+        energy = tEnergyGrid;
+        width = tPic.width();
+        height = tPic.height();
+        int[] hSeam = findVerticalSeam();
+        currentPic = temp;
+        energy = tempE;
+        width = temp.width();
+        height = temp.height();
+        return hSeam;
     }
 
     private void helperFillGrid() {
         for (int i = 0; i < width; i++) {
             energygrid[i][0] = energy(i, 0);
         }
-        if (height == 1) return;
-        for (int j = 1; j < height - 1; j++) {  // smallest の node の 2d array を作った
+        for (int j = 0; j < height - 1; j++) {
             for (int i = 0; i < width; i++) {
                 for (int c = -1; c <= 1; c++) {
                     if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
@@ -109,10 +127,10 @@ public class SeamCarver {
                     }
                     if (energygrid[i + c][j + 1] != 0) {
                         double oldEnergy = energygrid[i + c][j + 1];
-                        double newEnergy = energygrid[i][j] + energy(i + c, j + 1);
+                        double newEnergy = energygrid[i][j] + energy[i + c][j + 1];
                         energygrid[i + c][j + 1] = Math.min(oldEnergy, newEnergy);
                     } else {
-                        energygrid[i + c][j + 1] = energygrid[i][j] + energy(i + c, j + 1);
+                        energygrid[i + c][j + 1] = energygrid[i][j] + energy[i + c][j + 1];
                     }
                 }
             }
@@ -124,63 +142,51 @@ public class SeamCarver {
         helperFillGrid();
         int minIndex = 0;
         double min = energygrid[0][height - 1];
-        for (int s = 1; s < width; s++) {
-            double newMin = energygrid[s][height - 1];
+        for (int i = 1; i < width; i++) {
+            double newMin = energygrid[i][height - 1];
             if (newMin < min) {
                 min = newMin;
-                minIndex = s;
+                minIndex = i;
             }
         }
         int[] result = new int[height];
-        result[height - 1] = minIndexInRow;
-        if (height == 1) {
-            return result;
-        }
+        result[height - 1] = minIndex;
+
         if (width == 1) {
-            for (int i = 0; i < height; i++) {
-                result[i] = 0;
+            for (int i = 0; i < height - 1; i++) {
+                result[(height - 1) - i] = 0;
             }
             return result;
         }
-        double tempMin;
-
-
         double d1;
         double d2;
         double d3;
-
         int trackIndex = minIndex;
-
         for (int i = 1; i < height; i++) {
             if (trackIndex == 0) {
-                d1 = 99999;
-                d2 = energygrid[trackIndex][height - i - 1];
-                d3 = energygrid[trackIndex + 1][height - i - 1];
+                d1 = Double.POSITIVE_INFINITY;
+                d2 = energygrid[trackIndex][height - 1 - i];
+                d3 = energygrid[trackIndex + 1][height - 1 - i];
             } else if (trackIndex == width - 1) {
-                d1 = energygrid[trackIndex - 1][height - i - 1];
-                d2 = energygrid[trackIndex][height - i - 1];
-                d3 = 99999;
+                d1 = energygrid[trackIndex - 1][height - 1 - i];
+                d2 = energygrid[trackIndex][height - 1 - i];
+                d3 = Double.POSITIVE_INFINITY;
             } else {
-                d1 = energygrid[trackIndex - 1][height - i - 1];
-                d2 = energygrid[trackIndex][height - i - 1];
-                d3 = energygrid[trackIndex + 1][height - i - 1];
+                d1 = energygrid[trackIndex - 1][height - 1 - i];
+                d2 = energygrid[trackIndex][height - 1 - i];
+                d3 = energygrid[trackIndex + 1][height - 1 - i];
             }
-            double dif = min - energy(trackIndex, height - i - 1);
-            int addTrack;
-            if (dif == min - d1) {
-                trackIndex = trackIndex - 1;
-            } else if (dif == min - d2) {
-                trackIndex = trackIndex + 0;
+            int indexOfMin;
+            if (d1 <= d2 && d1 <= d3) {
+                indexOfMin = -1;
+            } else if (d2 <= d3 && d2 <= d1) {
+                indexOfMin = 0;
             } else {
-                trackIndex = trackIndex + 1;
+                indexOfMin = 11;
             }
-            /*
-            int indexOfMin = minOfThreeIndex(d1, d2, d3);
-            */
-            result[height - i - 1] = trackIndex;
-
+            trackIndex = trackIndex + indexOfMin;
+            result[height - 1 - i] = trackIndex;
         }
-
         return result;
     }
 
@@ -196,6 +202,14 @@ public class SeamCarver {
             throw new java.lang.IllegalArgumentException("ERROR");
         }
         currentPic = SeamRemover.removeVerticalSeam(currentPic, seam);
+    }
+
+    private void fillEnergy() {
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                energy[i][j] = energy(i, j);
+            }
+        }
     }
 }
 
