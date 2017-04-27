@@ -7,7 +7,7 @@ public class SeamCarver {
     private int width;
     private int height;
     private double[][] energy;
-    double[][]energygrid;
+    private double[][]energygrid;
 
     public SeamCarver(Picture picture) {
         currentPic = new Picture(picture);
@@ -198,10 +198,7 @@ public class SeamCarver {
 
     // remove vertical seam from picture
     public void removeVerticalSeam(int[] seam) {
-        if (seam.length != height) {
-            throw new java.lang.IllegalArgumentException("ERROR");
-        }
-        currentPic = SeamRemover.removeVerticalSeam(currentPic, seam);
+        return;
     }
 
     private void fillEnergy() {
