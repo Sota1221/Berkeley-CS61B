@@ -154,7 +154,7 @@ public class SeamCarver {
 
         if (width == 1) {
             for (int i = 0; i < height - 1; i++) {
-                result[(height - 1) - i] = 0;
+                result[height - 1 - i] = 0;
             }
             return result;
         }
@@ -182,7 +182,7 @@ public class SeamCarver {
             } else if (d2 <= d3 && d2 <= d1) {
                 indexOfMin = 0;
             } else {
-                indexOfMin = 11;
+                indexOfMin = 1;
             }
             trackIndex = trackIndex + indexOfMin;
             result[height - 1 - i] = trackIndex;
