@@ -7,8 +7,7 @@ public class SeamCarver {
     private int width;
     private int height;
     private double[][] energy;
-    private double[][] energygrid;
-    private int minIndexInRow;
+    double[][]energygrid;
 
     public SeamCarver(Picture picture) {
         currentPic = new Picture(picture);
@@ -16,7 +15,6 @@ public class SeamCarver {
         height = picture.height();
         energy = new double[width][height];
         fillEnergy();
-        energygrid = new double[width][height];
     }
 
     // current picture
@@ -92,27 +90,28 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        Picture temp = currentPic;
-        Picture tPic = new Picture(temp.height(), temp.width());
-        double[][] tempE = energy;
-        double[][] tEnergyGrid = new double[tempE[0].length][tempE.length];
-        for (int i = 0; i < tPic.width(); i++) {
-            for (int k = 0; k < tPic.height(); k++) {
-                Color c = temp.get(k, i);
-                tPic.set(i, k, c);
-                tEnergyGrid[i][k] = tempE[k][i];
+        Picture original = currentPic;
+        Picture tpic = new Picture(currentPic.height(), currentPic.width());
+        double[][] originalEnergies = energy;
+        double[][] transposeEnergies = new double[originalEnergies[0].length]
+                [originalEnergies.length];
+        for (int w = 0; w < tpic.width(); w++) {
+            for (int h = 0; h < tpic.height(); h++) {
+                Color c = original.get(h, w); // *****************
+                tpic.set(w, h, c);
+                transposeEnergies[w][h] = originalEnergies[h][w];
             }
         }
-        currentPic = tPic;
-        energy = tEnergyGrid;
-        width = tPic.width();
-        height = tPic.height();
-        int[] hSeam = findVerticalSeam();
-        currentPic = temp;
-        energy = tempE;
-        width = temp.width();
-        height = temp.height();
-        return hSeam;
+        currentPic = tpic;
+        energy = transposeEnergies;
+        width = tpic.width();
+        height = tpic.height();
+        int[] horizontalSeam = findVerticalSeam();
+        currentPic = original;
+        energy = originalEnergies;
+        width = original.width();
+        height = original.height();
+        return horizontalSeam;
     }
 
     private void helperFillGrid() {
@@ -139,6 +138,7 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
+        energygrid = new double[width][height];
         helperFillGrid();
         int minIndex = 0;
         double min = energygrid[0][height - 1];
