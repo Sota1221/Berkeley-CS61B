@@ -20,7 +20,6 @@ public class Rasterer {
     /** imgRoot is the name of the directory containing the images.
      *  You may not actually need this for your class. */
     public Rasterer(String imgRoot) {
-        // construct QuadTree
         this.imgRoot = imgRoot;
     }
 

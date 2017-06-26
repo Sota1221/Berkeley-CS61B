@@ -7,7 +7,7 @@ public class SeamCarver {
     private int width;
     private int height;
     private double[][] energy;
-    private double[][]energygrid;
+    private double[][] energygrid;
 
     public SeamCarver(Picture picture) {
         currentPic = new Picture(picture);
